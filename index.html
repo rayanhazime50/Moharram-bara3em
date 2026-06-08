@@ -176,6 +176,48 @@
     transition: transform 0.2s;
 }
 .puzzle-piece:hover { transform: scale(1.02); }   
+
+/* حاوية عرض الصورتين جنباً إلى جنب */
+.diff-game-flex {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 470px;
+    margin: 15px auto;
+}
+
+/* صندوق الصورة الواحدة */
+.diff-img-box {
+    position: relative;
+    width: 228px; /* تم تصغير العرض ليناسب شاشات الموبايل عند وضع صورتين متجاورتين */
+    height: 256px;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.diff-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+/* دائرة تحديد الفروقات الشفافة (توضع فوق الصورة اليسرى المعدلة فقط) */
+.diff-spot-target {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%); /* لجعل النقطة تبدأ من مركز الإحداثي */
+    /* يمكنك إزالة التعليق عن السطر أدناه أثناء اختبارك لتحديد الأماكن بسهولة برؤية دائرة حمراء */
+    /* border: 1px dashed red; */
+}
+
+.diff-spot-target.found {
+    border: 3px solid #00ff00 !important;
+    background: rgba(0, 255, 0, 0.3);
+    pointer-events: none; /* لمنع الضغط عليها مجدداً */
+}
        
        
     </style>
@@ -259,25 +301,17 @@
                         images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"] // 4 صور فريدة (ستتكرر لتصبح 8 بطاقات)
                     },
                     {
-                        type: "collect",
-                        instruction: "ابحث!",
-                        bgImage: "DifferenceLeft.jpeg",
-                        targets: [
-                            { x: 120, y: 80, size: 40 },
-                            { x: 340, y: 210, size: 45 },
-                            { x: 210, y: 390, size: 40 }
-                        ]
-                    },
-                    {
-                        type: "differences",
-                        instruction: "انقر على الفروقات الـ 3 بين الصورتين!",
-                        bgImage: "DifferenceRight.jpeg", // الصورة ذات الفروقات
-                        targets: [
-                            { x: 405, y: 195, size: 40 }, // العصفور
-                            { x: 375, y: 370, size: 40 }, // زجاجة الماء
-                            { x: 415, y: 335, size: 40 }  // الوعاء الفارغ
-                        ]
-                    },
+    type: "differences",
+    instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
+    originalImage: "DifferenceLeft.jpeg", // الصورة الأصلية (يمين)
+    modifiedImage: "DifferenceRight.jpeg", // الصورة المعدلة (يسار)
+    // الإحداثيات هنا تحسبها بدقة بناءً على حجم الصورة الواحدة المعروضة (وهنا تم ضبطها لتناسب عرض 228px لكل صورة)
+    targets: [
+        { x: 202, y: 97, size: 25 },  // مكان العصفور
+        { x: 187, y: 185, size: 25 }, // مكان الزجاجة
+        { x: 207, y: 167, size: 30 }  // مكان الوعاء الفارغ
+    ]
+},
                     {
     type: "puzzle",
     instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
@@ -481,42 +515,57 @@
         }
 
         // 2. محرك ألعاب النقر على الصورة (التجميع والفروقات)
-        function buildClickableImageGame(container, config) {
-            gameState.tempGameScore = 0;
-            const wrapper = document.createElement("div");
-            wrapper.className = "image-wrapper";
+        // محرك لعبة الفروقات المطور (صورتين بجانب بعضهما)
+function buildClickableImageGame(container, config) {
+    gameState.tempGameScore = 0;
 
-            const img = document.createElement("img");
-            img.src = config.bgImage;
-            wrapper.appendChild(img);
+    if (config.type === "differences") {
+        const flexContainer = document.createElement("div");
+        flexContainer.className = "diff-game-flex";
 
-            // زرع الأهداف المتفاعلة الشفافة بناءً على المصفوفة الإحداثية المدخلة
-            config.targets.forEach(tar => {
-                const spot = document.createElement("div");
-                spot.className = "click-target";
-                spot.style.left = tar.x + "px";
-                spot.style.top = tar.y + "px";
-                spot.style.width = tar.size + "px";
-                spot.style.height = tar.size + "px";
-                
-                // تفعيل خط خارجي وهمي اختياري لبيئة الفحص البصري أثناء التطوير
-                // spot.style.border = "1px dashed red";
+        // بناء الصندوق الأيمن (الصورة الأصلية)
+        const rightBox = document.createElement("div");
+        rightBox.className = "diff-img-box";
+        rightBox.innerHTML = `<img src="${config.originalImage}">`;
 
-                spot.onclick = function() {
-                    if(!spot.classList.contains("found")) {
-                        spot.classList.add("found");
-                        gameState.tempGameScore++;
-                        if(gameState.tempGameScore === config.targets.length) {
-                            endActiveMiniGame();
-                        }
+        // بناء الصندوق الأيسر (الصورة المعدلة)
+        const leftBox = document.createElement("div");
+        leftBox.className = "diff-img-box";
+        
+        const modImg = document.createElement("img");
+        modImg.src = config.modifiedImage;
+        leftBox.appendChild(modImg);
+
+        // توزيع الفروقات ديناميكياً فوق الصورة اليسرى
+        config.targets.forEach(tar => {
+            const spot = document.createElement("div");
+            spot.className = "diff-spot-target";
+            spot.style.left = tar.x + "px";
+            spot.style.top = tar.y + "px";
+            spot.style.width = tar.size + "px";
+            spot.style.height = tar.size + "px";
+
+            spot.onclick = function() {
+                if (!spot.classList.contains("found")) {
+                    spot.classList.add("found");
+                    gameState.tempGameScore++;
+                    
+                    document.getElementById("game-instruction").innerText = `رائع! المتبقي: ${config.targets.length - gameState.tempGameScore} فروقات`;
+
+                    if (gameState.tempGameScore === config.targets.length) {
+                        alert("أحسنت يا بطل! لقد عثرت على جميع الفروقات بين الصورتين بنجاح! 🔍🎉");
+                        endActiveMiniGame();
                     }
-                };
-                wrapper.appendChild(spot);
-            });
-            container.appendChild(wrapper);
-        }
+                }
+            };
+            leftBox.appendChild(spot);
+        });
 
-        // 3. محرك لعبة الأسئلة الديناميكية الجاذبة
+        flexContainer.appendChild(rightBox); // الأصلية يمين
+        flexContainer.appendChild(leftBox);  // المعدلة يسار
+        container.appendChild(flexContainer);
+    }
+}        // 3. محرك لعبة الأسئلة الديناميكية الجاذبة
         function buildQuizGame(container, config) {
             const qTitle = document.createElement("h3");
             qTitle.innerText = config.question;
