@@ -156,6 +156,28 @@
         }
         .feather-canvas img { width: 90%; height: auto; opacity: 0.1; transition: opacity 1s ease; }
         .feather-canvas.completed img { opacity: 1; animation: pulse 2s infinite; }
+        
+    /* تنسيق شبكة البازل 2×2 */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+}
+.puzzle-piece {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    cursor: pointer;
+    background-size: 300px 300px; /* يجب أن يطابق حجم الشبكة */
+    transition: transform 0.2s;
+}
+.puzzle-piece:hover { transform: scale(1.02); }   
+       
+       
     </style>
 </head>
 <body>
@@ -257,12 +279,10 @@
                         ]
                     },
                     {
-                        type: "quiz",
-                        instruction: "أجب إجابة صحيحة لتبرهن على استماعك الذكي للعصفورة !",
-                        question: "من أين بدأت رحلة العصفورة  لمواكبة ركب الإمام الحسين عليه السلام؟",
-                        options: ["من المدينة المنورة", "من أرض كربلاء", "من الكوفة المشرفة"],
-                        correctIndex: 0
-                    }
+    type: "puzzle",
+    instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
+    image: "Puzz1.jpg" // ضع هنا مسار الصورة التي تريد من اللعبة أن تقسمها لـ 4 أجزاء
+}
                 ]
             }
             // بإمكانك نسخ التركيبة أعلاه وتكرارها من 2 إلى 10 لبقية الأيام بكل بساطة وسيعمل النظام ديناميكياً
@@ -397,12 +417,12 @@
 
             // فحص نوع اللعبة المطلوية وبناء مكوناتها الرياضية التفاعلية
             if(gameConfig.type === "memory") {
-                buildMemoryGame(area, gameConfig);
-            } else if(gameConfig.type === "collect" || gameConfig.type === "differences") {
-                buildClickableImageGame(area, gameConfig);
-            } else if(gameConfig.type === "quiz") {
-                buildQuizGame(area, gameConfig);
-            }
+    buildMemoryGame(area, gameConfig);
+} else if(gameConfig.type === "collect" || gameConfig.type === "differences") {
+    buildClickableImageGame(area, gameConfig);
+} else if(gameConfig.type === "puzzle") {
+    buildPuzzleGame(area, gameConfig); // الدالة الجديدة للبازل
+}
         }
 
         // 1. محرك لعبة الذاكرة الديناميكي
@@ -562,6 +582,87 @@
             document.getElementById(screenId).classList.add('active-screen');
             window.scrollTo(0, 0);
         }
+         
+      // 4. محرك لعبة البازل الديناميكي (2×2) للأطفال
+function buildPuzzleGame(container, config) {
+    const grid = document.createElement("div");
+    grid.className = "puzzle-grid";
+
+    // تحديد مواقع الأجزاء الأربعة الصحيحة في الصورة
+    const correctOrder = [
+        { x: "0%", y: "0%" },     // أعلى يسار
+        { x: "100%", y: "0%" },   // أعلى يمين
+        { x: "0%", y: "100%" },   // أسفل يسار
+        { x: "100%", y: "100%" }  // أسفل يمين
+    ];
+
+    // عمل نسخة ليتم خلطها
+    let currentOrder = [...correctOrder];
+    
+    // خلط القطع حتى لا تظهر مرتبة جاهزة، مع ضمان عدم ظهورها مرتبة بالصدفة
+    do {
+        currentOrder.sort(() => Math.random() - 0.5);
+    } while (JSON.stringify(currentOrder) === JSON.stringify(correctOrder));
+
+    let selectedPiece = null;
+
+    currentOrder.forEach((pos, index) => {
+        const piece = document.createElement("div");
+        piece.className = "puzzle-piece";
+        piece.style.backgroundImage = `url('${config.image}')`;
+        piece.style.backgroundPosition = `${pos.x} ${pos.y}`;
+        piece.dataset.currentX = pos.x;
+        piece.dataset.currentY = pos.y;
+
+        piece.onclick = function() {
+            if (!selectedPiece) {
+                // اختيار القطعة الأولى
+                selectedPiece = piece;
+                piece.style.borderColor = "#00ff00"; // تلوين الإطار بالأخضر ليعرف الطفل أنه اختارها
+            } else {
+                // اختيار القطعة الثانية وتبديل الأماكن بينهما
+                let tempX = piece.style.backgroundPositionX;
+                let tempY = piece.style.backgroundPositionY;
+                
+                piece.style.backgroundPositionX = selectedPiece.style.backgroundPositionX;
+                piece.style.backgroundPositionY = selectedPiece.style.backgroundPositionY;
+                
+                selectedPiece.style.backgroundPositionX = tempX;
+                selectedPiece.style.backgroundPositionY = tempY;
+
+                // إعادة اللون الطبيعي للإطار
+                selectedPiece.style.borderColor = "var(--gold)";
+                selectedPiece = null;
+
+                // التحقق هل رتب الطفل البازل بشكل صحيح؟
+                if (checkPuzzleSolved(grid, correctOrder)) {
+                    alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
+                    endActiveMiniGame();
+                }
+            }
+        };
+        grid.appendChild(piece);
+    });
+
+    container.appendChild(grid);
+}
+
+// دالة التحقق من صحة ترتيب البازل
+function checkPuzzleSolved(gridElement, correctOrder) {
+    const pieces = gridElement.querySelectorAll(".puzzle-piece");
+    for (let i = 0; i < pieces.length; i++) {
+        let currentX = pieces[i].style.backgroundPositionX;
+        let currentY = pieces[i].style.backgroundPositionY;
+        
+        // تنظيف القيم لمقارنتها بدقة (تحويل الـ لـ مئوية)
+        if (currentX !== correctOrder[i].x || currentY !== correctOrder[i].y) {
+            return false; // إذا وُجدت قطعة واحدة في مكان خاطئ
+        }
+    }
+    return true; // كل القطع في مكانها الصحيح
+}  
+        
+        
     </script>
 </body>
 </html>
