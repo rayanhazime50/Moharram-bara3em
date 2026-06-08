@@ -1,543 +1,567 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رحلة دمعة  - ألعاب عاشوراء</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة العصفورة - حكايا كربلاء</title>
+    <style>
+        :root {
+            --bg-color: #141414;
+            --card-color: #242424;
+            --gold: #dfb743;
+            --ashura-green: #154233;
+            --text-light: #f0f0f0;
+            --accent-red: #9e2a2b;
+        }
 
-<style>
-body {
-    margin: 0;
-    font-family: "Tahoma", sans-serif;
-    background: radial-gradient(circle at top, #2b0000, #000);
-    color: white;
-    overflow-x: hidden;
-    user-select: none;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+        }
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(255, 0, 0, 0.15), transparent 40%),
-                radial-gradient(circle at 80% 60%, rgba(255, 215, 0, 0.08), transparent 40%);
-    pointer-events: none;
-}
+        /* حاوية الشاشات الموحدة */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .active-screen { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
 
-.screen { display: none; padding: 20px; max-width: 600px; margin: auto; }
-.active { display: block; }
+        h1, h2, h3 { color: var(--gold); text-shadow: 1px 1px 4px rgba(0,0,0,0.6); margin-top: 10px; }
+        p { font-size: 16px; line-height: 1.6; color: #dddddd; }
 
-.card {
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(12px);
-    border: 2px solid rgba(255, 215, 0, 0.1);
-    border-radius: 24px;
-    padding: 25px;
-    margin-top: 15px;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
-    text-align: center;
-}
+        /* الأزرار وتأثيراتها المفضلة للأطفال */
+        button {
+            background-color: var(--ashura-green);
+            color: white;
+            border: 2px solid var(--gold);
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: all 0.2s ease;
+            margin: 10px 0;
+        }
+        button:hover { transform: scale(1.05); background-color: #1c5743; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-h2, h3 { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        /* شاشة تسجيل الدخول والخريطة */
+        .input-box {
+            width: 85%;
+            padding: 12px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            background: #333;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .day-node {
+            background: var(--card-color);
+            border: 2px solid #3c3c3c;
+            border-radius: 20px;
+            padding: 15px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .day-node.unlocked { border-color: var(--gold); background: linear-gradient(145deg, #242424, #2d3d35); }
+        .day-node.locked { opacity: 0.5; cursor: not-allowed; }
+        .day-node.locked::after { content: "🔒"; position: absolute; top: 10px; left: 10px; font-size: 16px; }
 
-input {
-    width: 100%; padding: 15px; margin: 15px 0;
-    border: 2px solid #ffd700; border-radius: 16px;
-    background: rgba(0,0,0,0.8); color: white; font-size: 18px;
-    text-align: center; box-sizing: border-box;
-}
+        /* شاشة الصوت والقصة */
+        .avatar-container { font-size: 60px; margin: 15px 0; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        /* شاشات الألعاب الديناميكية */
+        .game-area {
+            width: 100%;
+            background: var(--card-color);
+            border-radius: 20px;
+            padding: 15px;
+            box-sizing: border-box;
+            margin: 15px 0;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-button {
-    width: 100%; padding: 16px; margin-top: 12px; border: none; border-radius: 16px;
-    background: linear-gradient(90deg, #8b0000, #4a0000); color: white;
-    font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s;
-}
-button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); }
+        /* 1. لعبة الذاكرة (Memory Grid) */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        .memory-card {
+            aspect-ratio: 1;
+            background-color: var(--ashura-green);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+        }
+        .memory-card.flipped { transform: rotateY(180deg); }
+        .memory-card-front, .memory-card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        }
+        .memory-card-front { background: #333; transform: rotateY(180deg); }
+        .memory-card-front img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        .memory-card-back { font-size: 24px; color: var(--gold); }
 
-.badge { background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 50px; display: inline-block; font-size: 16px; border: 1px solid rgba(255,215,0,0.2); margin: 5px; }
+        /* 2. لعبة الفروقات والتجميع */
+        .image-wrapper { position: relative; width: 100%; border: 3px solid var(--gold); border-radius: 12px; overflow: hidden; }
+        .image-wrapper img { width: 100%; height: auto; display: block; }
+        .click-target { position: absolute; border-radius: 50%; cursor: pointer; }
+        .click-target.found { border: 3px solid #00ff00; background: rgba(0,255,0,0.3); pointer-events: none; }
 
-.day-card {
-    background: rgba(40, 0, 0, 0.6); border: 2px solid rgba(255, 0, 0, 0.3);
-    padding: 18px; margin-top: 12px; border-radius: 18px; cursor: pointer;
-    font-size: 18px; display: flex; justify-content: space-between; transition: 0.3s;
-}
-.day-card:hover { transform: translateY(-3px); background: rgba(70, 0, 0, 0.8); }
+        /* 3. لعبة الأسئلة */
+        .quiz-option {
+            background: #333; border: 2px solid #555; border-radius: 15px; width: 90%;
+            padding: 12px; margin: 8px 0; cursor: pointer; text-align: right; font-size: 16px;
+        }
+        .quiz-option:hover { border-color: var(--gold); background: #444; }
 
-/* الألعاب */
-.memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-.memory-card { 
-    height: 80px; background: #4a0000; border: 2px solid #ffd700; border-radius: 12px; 
-    display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; transition: background 0.2s; overflow: hidden;
-}
-.memory-card img { width: 100%; height: 100%; object-fit: cover; display: none; }
-.memory-card.revealed { background: #ffd700; }
-.memory-card.revealed img { display: block; }
-
-#gameCanvas { background: #1a0000; border: 2px solid #ffd700; border-radius: 16px; display: block; margin: 15px auto; max-width: 100%; }
-
-
-.puzzle-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 240px; height: 240px; margin: 20px auto; }
-.puzzle-piece { width: 116px; height: 116px; background-size: 240px 240px; border: 2px dashed #ffd700; border-radius: 8px; cursor: pointer; }
-
-.diff-point{
-    position:absolute;
-    width:30px;
-    height:30px;
-    cursor:pointer;
-    border-radius:50%;
-}
-
-.diff-point.found{
-    border:4px solid #00ff00;
-    background:rgba(0,255,0,.25);
-}
-</style>
+        /* لوحة التهنئة النهائية بالريش */
+        .feather-canvas {
+            width: 100%; aspect-ratio: 1; background: radial-gradient(circle, #222, #050505);
+            border: 3px dashed var(--gold); border-radius: 20px; margin: 15px 0;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .feather-canvas img { width: 90%; height: auto; opacity: 0.1; transition: opacity 1s ease; }
+        .feather-canvas.completed img { opacity: 1; animation: pulse 2s infinite; }
+    </style>
 </head>
 <body>
 
-<!-- شاشة البداية -->
-<div class="screen active" id="startScreen">
-    <div class="card">
-        <h2>🏴 رحلة دمعة 🏴</h2>
-        <p>مرحباً بك يا بطل/ة في ألعاب عاشوراء اليومية</p>
-        <input id="name" placeholder="اكتب/ي اسمك  هنا...">
-        <button onclick="startGame()">ابدأ/ي الرحلة 🚩</button>
+    <div id="scr-login" class="screen active-screen">
+        <div class="avatar-container">🕊️</div>
+        <h1>العصفورة </h1>
+        <h2>قصص وعِبر من أرض كربلاء</h2>
+        <p>مرحباً بك يا بطل الصغير، اكتب اسمك لنبدأ الرحلة الممتعة معاً كل يوم ومواكبة مجالسنا الحسينية.</p>
+        <input type="text" id="child-name" class="input-box" placeholder="اكتب اسمك الجميل هنا...">
+        <button onclick="handleLogin()">ابدأ الرحلة المشوقة 🏁</button>
     </div>
-</div>
 
-<!-- الشاشة الرئيسية -->
-<div class="screen" id="homeScreen">
-    <div class="card">
-        <span class="badge">🚩 الرايات: <span id="flags">0</span> / 10</span>
-        <span class="badge">🪣 مجموع ما جمعته: <span id="totalItemsScore">0</span></span>
-    </div>
-    <div class="card">
+    <div id="scr-map" class="screen">
+        <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px solid var(--gold); padding-bottom:5px;">
+            <span>البطل: <b id="lbl-name" style="color:var(--gold)">-</b></span>
+            <span>رصيدي: <b id="lbl-feathers" style="color:var(--gold)">0</b> 🪶</span>
+        </div>
         <h3>خريطة الأيام العشرة</h3>
-        <div id="daysContainer"></div>
+        <p>تفتح قصة ولعبة كل يوم تلقائياً عند الساعة 4:30 عصراً</p>
+        <div class="days-grid" id="map-grid"></div>
+        <button id="btn-prize-screen" style="display:none; width:100%; margin-top:20px; background-color:var(--accent-red);" onclick="viewFinalPrize()">🎁 هدية التزامك بالريش</button>
     </div>
-</div>
 
-<!-- شاشة القصة -->
-<div class="screen" id="storyScreen">
-    <div class="card">
-        <h2 id="storyTitle"></h2>
-        <p>اضغط/ي على الزر أدناه لبدء تحديات اليوم الممتعة!</p>
-        <button onclick="startDailyGames()">جاهز/ة للعب والتحدي! 🎮</button>
+    <div id="scr-story" class="screen">
+        <h2 id="story-day-title">اليوم...</h2>
+        <div class="avatar-container">🕊️</div>
+        <p>أنصت جيداً لقصة العصفورة  لتستطيع حل الألعاب التفاعلية بعدها بنجاح:</p>
+        
+        <div style="background:#222; padding:20px; border-radius:15px; border:1px solid #444; width:90%; margin:15px 0;">
+            <audio id="audio-player" controls style="width:100%;">
+                <source id="audio-src" src="" type="audio/mpeg">
+                متصفحك لا يدعم تشغيل الصوت.
+            </audio>
+        </div>
+        <span id="audio-lock-msg" style="color:#aaa; font-size:14px; margin-bottom:10px;">🔒 استمع للقصة كاملة لفتح الألعاب</span>
+        <button id="btn-go-games" disabled onclick="initGameSequence()">انتقل للألعاب الأربعة (0/4) 🎮</button>
+        <button onclick="showScreen('scr-map')" style="background:transparent; border-color:transparent; font-size:14px; color:#aaa;">رجوع للخريطة</button>
     </div>
-</div>
 
-<!-- شاشة محرك الألعاب -->
-<div class="screen" id="gameScreen">
-    <div class="card">
-        <h3 id="gameTypeTitle"></h3>
-        <p id="gameInstructions"></p>
+    <div id="scr-game" class="screen">
+        <h2 id="game-title">اسم اللعبة التفاعلية</h2>
+        <p id="game-instruction">ماذا يفعل الطفل هنا؟</p>
         
-        <div id="gameContainer"></div>
-
-        <button id="nextGameBtn" style="display:none;" onclick="nextGame()">الانتقال للعبة التالية ✨</button>
-    </div>
-</div>
-
-<script>
-/* ================= بيانات الـ 10 أيام مع روابط صور الميموري والبازل ================= */
-// وضعنا صوراً تجريبية من الإنترنت لتري النتيجة فوراً (يمكنك استبدال الروابط بصورك الخاصة لاحقاً)
-const daysData = [
-    { 
-        title: "اليوم 1: هلال محرم", 
-        emoji: "🌙", 
-        memoryImages: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"],
-        puzzleImg: "Puzz1.jpeg"
-
-    },
-    { 
-        title: "اليوم 2: خيام كربلاء", 
-        emoji: "⛺", 
-        memoryImages: ["https://picsum.photos/100/100?random=21", "https://picsum.photos/100/100?random=22", "https://picsum.photos/100/100?random=23", "https://picsum.photos/100/100?random=24"],
-        puzzleImg: "https://picsum.photos/240/240?random=2"
-        
-    },
-    { 
-        title: "اليوم 3: السيدة رقية (ع)", 
-        emoji: "🕯️", 
-        memoryImages: ["https://picsum.photos/100/100?random=31", "https://picsum.photos/100/100?random=32", "https://picsum.photos/100/100?random=33", "https://picsum.photos/100/100?random=34"],
-        puzzleImg: "https://picsum.photos/240/240?random=3"
-        },
-        
-    { 
-        title: "اليوم 4: أصحاب الحسين", 
-        emoji: "🛡️", 
-        memoryImages: ["https://picsum.photos/100/100?random=41", "https://picsum.photos/100/100?random=42", "https://picsum.photos/100/100?random=43", "https://picsum.photos/100/100?random=44"],
-        puzzleImg: "https://picsum.photos/240/240?random=4"
-  
-    },
-    { 
-        title: "اليوم 5: السيدة زينب (ع)", 
-        emoji: "🕌", 
-        memoryImages: ["https://picsum.photos/100/100?random=51", "https://picsum.photos/100/100?random=52", "https://picsum.photos/100/100?random=53", "https://picsum.photos/100/100?random=54"],
-        puzzleImg: "https://picsum.photos/240/240?random=5"
-        
-    },
-    { 
-        title: "اليوم 6: القاسم بن الحسن", 
-        emoji: "🌿", 
-        memoryImages: ["https://picsum.photos/100/100?random=61", "https://picsum.photos/100/100?random=62", "https://picsum.photos/100/100?random=63", "https://picsum.photos/100/100?random=64"],
-        puzzleImg: "https://picsum.photos/240/240?random=6"
-        
-    },
-    { 
-        title: "اليوم 7: قمر بني هاشم", 
-        emoji: "💧", 
-        memoryImages: ["https://picsum.photos/100/100?random=71", "https://picsum.photos/100/100?random=72", "https://picsum.photos/100/100?random=73", "https://picsum.photos/100/100?random=74"],
-        puzzleImg: "https://picsum.photos/240/240?random=7"
-        
-           },
-    { 
-        title: "اليوم 8: علي الأكبر (ع)", 
-        emoji: "🐎", 
-        memoryImages: ["https://picsum.photos/100/100?random=81", "https://picsum.photos/100/100?random=82", "https://picsum.photos/100/100?random=83", "https://picsum.photos/100/100?random=84"],
-        puzzleImg: "https://picsum.photos/240/240?random=8"
-        
-    },
-    { 
-        title: "اليوم 9: الطفل الرضيع", 
-        emoji: "🍼", 
-        memoryImages: ["https://picsum.photos/100/100?random=91", "https://picsum.photos/100/100?random=92", "https://picsum.photos/100/100?random=93", "https://picsum.photos/100/100?random=94"],
-        puzzleImg: "https://picsum.photos/240/240?random=9"
-        
-    },
-    { 
-        title: "اليوم 10: انتصار الحسين", 
-        emoji: "🏆", 
-        memoryImages: ["https://picsum.photos/100/100?random=101", "https://picsum.photos/100/100?random=102", "https://picsum.photos/100/100?random=103", "https://picsum.photos/100/100?random=104"],
-        puzzleImg: "https://picsum.photos/240/240?random=10"
-        
-    }
-];
-
-/* ================= الـ STATE ================= */
-let state = { 
-    name: "", 
-    currentDayIndex: 0, 
-    flags: 0, 
-    totalCollected: 0, 
-    completedDays: [] 
-};
-
-let currentGameStep = 1;
-
-window.onload = function() { 
-    switchScreen("startScreen");
-};
-
-function startGame() {
-    let nameInput = document.getElementById("name");
-    if (!nameInput) return;
-    let name = nameInput.value.trim();
-    if (!name) return alert(" اكتب اسمك!");
-    state.name = name;
-    showHome();
-}
-
-function showHome() {
-    switchScreen("homeScreen");
-    document.getElementById("flags").innerText = state.flags;
-    document.getElementById("totalItemsScore").innerText = state.totalCollected;
-    renderDays();
-}
-
-function renderDays() {
-    let html = "";
-    daysData.forEach((d, i) => {
-        let completed = state.completedDays.includes(i) ? "✅ مكتمل" : "";
-        html += `
-            <div class="day-card" onclick="openDay(${i})">
-                <span>${d.emoji} ${d.title}</span>
-                <span>${completed}</span>
+        <div class="game-area" id="main-game-area">
             </div>
-        `;
-    });
-    document.getElementById("daysContainer").innerHTML = html;
-}
 
-function openDay(index) {
-    state.currentDayIndex = index;
-    currentGameStep = 1; 
-    switchScreen("storyScreen");
-    document.getElementById("storyTitle").innerText = daysData[index].title;
-}
+        <button id="btn-next-game" style="display:none;" onclick="progressGameSequence()">تابع اللعبة التالية ➡️</button>
+    </div>
 
-function startDailyGames() {
-    switchScreen("gameScreen");
-    loadGameEngine();
-}
-
-/* ================= محرك الألعاب المطور ================= */function loadGameEngine() {
-
-    let container = document.getElementById("gameContainer");
-    let nextBtn = document.getElementById("nextGameBtn");
-
-    nextBtn.style.display = "none";
-    container.innerHTML = "";
-
-    let currentDay = daysData[state.currentDayIndex];
-
-    /* ================= اللعبة 1 ================= */
-
-    if (currentGameStep === 1) {
-
-        document.getElementById("gameTypeTitle").innerText = "اللعبة 1: أين الصور المتشابهة؟ 🧠";
-        document.getElementById("gameInstructions").innerText = "اضغط على بطاقتين لمطابقتها!";
+    <div id="scr-prize" class="screen">
+        <h2>أحسنت المواظبة يا بطل الحسين! 🎉</h2>
+        <p>لقد جمعت ريشات الأيام العشرة بالكامل، وها هي لوحتك النورانية مرسومة بريش الوفاء المحب!</p>
         
-        let grid = document.createElement("div");
-        grid.className = "memory-grid";
-        
-        // نكرر الصور الـ 4 ليصبح لدينا 8 بطاقات (كل صورتين متطابقتين)
-        let items = [...currentDay.memoryImages, ...currentDay.memoryImages];
-        items.sort(() => 0.5 - Math.random());
-        
-        let selectedCards = [];
-        let matchedCount = 0;
+        <div class="feather-canvas" id="canvas-box">
+            <img id="prize-img" src="labaik-ya-hussein-feathers.jpg" alt="لبيك يا حسين">
+        </div>
+        <h3 id="prize-status" style="color:var(--gold)">اجمع المزيد من ريشات الأيام لتبني الصورة!</h3>
+        <button onclick="showScreen('scr-map')">العودة إلى الخريطة</button>
+    </div>
 
-        items.forEach((imgUrl) => {
-            let card = document.createElement("div");
-            card.className = "memory-card";
-            
-            let img = document.createElement("img");
-            img.src = imgUrl;
-            card.appendChild(img);
-            
-            card.onclick = function() {
-                if (selectedCards.length < 2 && !card.classList.contains("revealed")) {
-                    card.classList.add("revealed");
-                    selectedCards.push(card);
-                    
-                    if (selectedCards.length === 2) {
-                        let img1 = selectedCards[0].querySelector("img").src;
-                        let img2 = selectedCards[1].querySelector("img").src;
-                        
-                        if (img1 === img2) {
-                            matchedCount += 2;
-                            selectedCards = [];
-                            if (matchedCount === items.length) nextBtn.style.display = "block";
-                        } else {
-                            setTimeout(() => {
-                                selectedCards[0].classList.remove("revealed");
-                                selectedCards[1].classList.remove("revealed");
-                                selectedCards = [];
-                            }, 800);
-                        }
+    <script>
+        /* ==========================================================================
+           تنظيم ومصفوفة بيانات اللعبة الديناميكية (Dynamic Game Data Object)
+           بإمكانك تغيير مسارات الصور، الأصوات، والأسئلة من هنا بكل سلاسة ومرونة
+           ========================================================================== */
+        
+        // تاريخ ووقت انطلاق اللعبة الموحد للجميع (السنة، الشهر يبدأ من 0، اليوم)
+        const LAUNCH_DATE = new Date(2026, 5, 8); // مثال: 8 يونيو 2026
+
+        const gameDatabase = {
+            1: {
+                title: "اليوم الأول: هلال المحرم الحزين",
+                audio: "audio/day1.mp3",
+                games: [
+                    {
+                        type: "memory",
+                        instruction: "اطوِ البطاقات الممتعة وجد صور العصافير المتطابقة!",
+                        images: ["img/bird1.jpg", "img/bird2.jpg", "img/pot1.jpg", "img/tree1.jpg"] // 4 صور فريدة (ستتكرر لتصبح 8 بطاقات)
+                    },
+                    {
+                        type: "collect",
+                        instruction: "ابحث عن الفراشات الثلاثة الضائعة في الصورة وانقر عليها تجميعاً لها!",
+                        bgImage: "img/bg-day1.jpg",
+                        targets: [
+                            { x: 120, y: 80, size: 40 },
+                            { x: 340, y: 210, size: 45 },
+                            { x: 210, y: 390, size: 40 }
+                        ]
+                    },
+                    {
+                        type: "differences",
+                        instruction: "انقر على الفروقات الـ 3 المخبأة في هذه الصورة المعدلة عن الأصلية!",
+                        bgImage: "https://googleusercontent.com/image_generation_content/0", // الصورة ذات الفروقات
+                        targets: [
+                            { x: 405, y: 195, size: 40 }, // العصفور
+                            { x: 375, y: 370, size: 40 }, // زجاجة الماء
+                            { x: 415, y: 335, size: 40 }  // الوعاء الفارغ
+                        ]
+                    },
+                    {
+                        type: "quiz",
+                        instruction: "أجب إجابة صحيحة لتبرهن على استماعك الذكي للعصفورة !",
+                        question: "من أين بدأت رحلة العصفورة  لمواكبة ركب الإمام الحسين عليه السلام؟",
+                        options: ["من المدينة المنورة", "من أرض كربلاء", "من الكوفة المشرفة"],
+                        correctIndex: 0
                     }
-                }
-            };
-            grid.appendChild(card);
-        });
-        container.appendChild(grid);
-
-    }
-
-    /* ================= اللعبة 2 ================= */
-
-    else if (currentGameStep === 2) {
-
-        // خلي كود التجميع الموجود عندك هون كما هو
-document.getElementById("gameTypeTitle").innerText = "اللعبة 2: تجميع حسنات   🪣";
-        document.getElementById("gameInstructions").innerText = "اجمع 5 عناصر  !";
-        
-        let canvas = document.createElement("canvas");
-        canvas.id = "gameCanvas"; canvas.width = 300; canvas.height = 300;
-        container.appendChild(canvas);
-        
-        let ctx = canvas.getContext("2d");
-        let basket = { x: 130, y: 270, w: 50, h: 15 };
-        let item = { x: Math.random() * 250, y: 0, speed: 3.5 };
-        let localScore = 0;
-        
-        canvas.onmousemove = function(e) { basket.x = e.offsetX - 25; };
-        canvas.ontouchmove = function(e) { 
-            let rect = canvas.getBoundingClientRect();
-            if(e.touches[0]) basket.x = e.touches[0].clientX - rect.left - 25; 
+                ]
+            }
+            // بإمكانك نسخ التركيبة أعلاه وتكرارها من 2 إلى 10 لبقية الأيام بكل بساطة وسيعمل النظام ديناميكياً
         };
 
-        function updateCanvas() {
-            if (!document.getElementById("gameCanvas")) return;
-            ctx.clearRect(0, 0, 300, 300);
-            ctx.fillStyle = "#ffd700"; ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
-            ctx.font = "24px Arial"; ctx.fillText(currentDay.emoji, item.x, item.y);
-            
-            item.y += item.speed;
-            if (item.y > 260 && item.x > basket.x - 10 && item.x < basket.x + 50) {
-                localScore++; 
-                state.totalCollected++; 
-                item.y = 0; item.x = Math.random() * 250;
-            } else if (item.y > 300) { item.y = 0; item.x = Math.random() * 250; }
-            
-            if (localScore >= 5) {
-                ctx.fillStyle = "#00ff00"; ctx.font = "18px Tahoma"; ctx.fillText("رائع! زاد رصيدك العام بقيمة 5 🚀", 25, 150);
-                document.getElementById("totalItemsScore").innerText = state.totalCollected; 
-                nextBtn.style.display = "block";
-            } else { requestAnimationFrame(updateCanvas); }
+        // متغيرات النظام وتتبع حالة اللاعب الحالية
+        let gameState = {
+            playerName: "",
+            collectedFeathers: 0,
+            completedDays: [], // الأيام المكتملة مخزنة
+            activeDay: 1,
+            activeGameIndex: 0,
+            tempGameScore: 0
+        };
+
+        window.onload = function() {
+            loadSavedProgress();
+        };
+
+        function loadSavedProgress() {
+            if(localStorage.getItem("ashura_player")) {
+                gameState.playerName = localStorage.getItem("ashura_player");
+                gameState.collectedFeathers = parseInt(localStorage.getItem("ashura_feathers")) || 0;
+                gameState.completedDays = JSON.parse(localStorage.getItem("ashura_days")) || [];
+                document.getElementById("child-name").value = gameState.playerName;
+                handleLogin();
+            }
         }
-        updateCanvas();
 
+        function saveProgress() {
+            localStorage.setItem("ashura_player", gameState.playerName);
+            localStorage.setItem("ashura_feathers", gameState.collectedFeathers);
+            localStorage.setItem("ashura_days", JSON.stringify(gameState.completedDays));
+        }
 
-    }
+        function handleLogin() {
+            const name = document.getElementById("child-name").value.trim();
+            if(!name) { alert("لطفاً اكتب اسمك لتنضم إلى العصفورة !"); return; }
+            gameState.playerName = name;
+            document.getElementById("lbl-name").innerText = name;
+            document.getElementById("lbl-feathers").innerText = gameState.collectedFeathers;
+            saveProgress();
+            buildDaysMap();
+            showScreen("scr-map");
+        }
 
-    /* ================= اللعبة 3 ================= */
+        // بناء خريطة الأيام ديناميكياً بناءً على تاريخ الانطلاق الثابت والوقت الحاضر 4:30 عصراً
+        function buildDaysMap() {
+            const grid = document.getElementById("map-grid");
+            grid.innerHTML = "";
+            const now = new Date();
 
-    else if (currentGameStep === 3) {
+            for(let d = 1; d <= 10; d++) {
+                const node = document.createElement("div");
+                node.className = "day-node";
+                
+                // حساب تاريخ استحقاق اليوم البرمجي بدقة
+                let targetUnlockTime = new Date(LAUNCH_DATE);
+                targetUnlockTime.setDate(LAUNCH_DATE.getDate() + (d - 1));
+                targetUnlockTime.setHours(16, 30, 0, 0); // الساعة 4:30 عصراً ثابتة
 
-        document.getElementById("gameTypeTitle").innerText =
-        "اللعبة 3: رتّب البازل 🧩";
+                // الفتح التلقائي الحقيقي بناءً على توقيت الخادم / العميل الجاري
+                let isUnlocked = now >= targetUnlockTime || d === 1; // جعل اليوم الأول متاحاً فوراً للتأكد البرمجي
+                let isDone = gameState.completedDays.includes(d);
 
-        document.getElementById("gameInstructions").innerText =
-        "اضغط على قطعتين لتبديل أماكنهما";
+                if(isUnlocked) {
+                    node.classList.add("unlocked");
+                    node.innerHTML = `<h3>المرحلة ${d}</h3><p style="font-size:12px; color:var(--gold);">${gameDatabase[d] ? gameDatabase[d].title : 'مجلس كربلائي وعبرة'}</p>`;
+                    if(isDone) {
+                        node.innerHTML += `<span style="color:#00ff00; font-size:14px;">مكتمل 🪶</span>`;
+                    }
+                    node.onclick = () => launchDayStory(d);
+                } else {
+                    node.classList.add("locked");
+                    node.innerHTML = `<h3>المرحلة ${d}</h3><p style="font-size:12px; color:#888;">تفتح الساعة 4:30 عصراً</p>`;
+                }
+                grid.appendChild(node);
+            }
 
-        let puzzleDiv = document.createElement("div");
-        puzzleDiv.className = "puzzle-container";
+            if(gameState.collectedFeathers >= 1) { // يفضل ترفيعها لـ 10 عند ملء كافة الأيام
+                document.getElementById("btn-prize-screen").style.display = "block";
+            }
+        }
 
-        let piecesOrder = [0,1,2,3].sort(() => 0.5 - Math.random());
+        function launchDayStory(dayNum) {
+            if(!gameDatabase[dayNum]) {
+                alert("سيتم إدراج بيانات هذا المجلس وعناوينه وألعابه لاحقاً من قِبلك بملف البيانات المتكامل.");
+                return;
+            }
+            gameState.activeDay = dayNum;
+            document.getElementById("story-day-title").innerText = gameDatabase[dayNum].title;
+            
+            // تهيئة مشغل الصوت
+            const player = document.getElementById("audio-player");
+            document.getElementById("audio-src").src = gameDatabase[dayNum].audio;
+            player.load();
 
-        let selectedPiece = null;
+            // فك قفل أزرار اللعب ديناميكياً عند إكمال سماع التسجيل
+            document.getElementById("btn-go-games").disabled = true;
+            document.getElementById("audio-lock-msg").style.display = "inline";
 
-        function renderPuzzle() {
+            player.onended = function() {
+                document.getElementById("btn-go-games").disabled = false;
+                document.getElementById("audio-lock-msg").style.display = "none";
+            };
 
-            puzzleDiv.innerHTML = "";
+            // تخطي اختياري للتسهيل أثناء المراجعة والاختبار البصري من المطور
+            document.getElementById("audio-lock-msg").onclick = () => { player.onended(); };
 
-            piecesOrder.forEach((pos,index)=>{
+            showScreen("scr-story");
+        }
 
-                let piece = document.createElement("div");
+        /* ==========================================================================
+           محرك توليد وإدارة تتابع الألعاب الأربعة المدمجة ديناميكياً
+           ========================================================================== */
+        function initGameSequence() {
+            gameState.activeGameIndex = 0;
+            loadGameEngine();
+            showScreen("scr-game");
+        }
 
-                piece.className = "puzzle-piece";
+        function loadGameEngine() {
+            document.getElementById("btn-next-game").style.display = "none";
+            const currentDayData = gameDatabase[gameState.activeDay];
+            const gameConfig = currentDayData.games[gameState.activeGameIndex];
+            
+            document.getElementById("game-title").innerText = `اللعبة التفاعلية (${gameState.activeGameIndex + 1} / 4)`;
+            document.getElementById("game-instruction").innerText = gameConfig.instruction;
 
-                piece.style.backgroundImage =
-                `url('${currentDay.puzzleImg}')`;
+            const area = document.getElementById("main-game-area");
+            area.innerHTML = ""; // تنظيف ساحة العرض السابقة
 
-                let x = (pos % 2) * 120;
-                let y = Math.floor(pos / 2) * 120;
+            // فحص نوع اللعبة المطلوية وبناء مكوناتها الرياضية التفاعلية
+            if(gameConfig.type === "memory") {
+                buildMemoryGame(area, gameConfig);
+            } else if(gameConfig.type === "collect" || gameConfig.type === "differences") {
+                buildClickableImageGame(area, gameConfig);
+            } else if(gameConfig.type === "quiz") {
+                buildQuizGame(area, gameConfig);
+            }
+        }
 
-                piece.style.backgroundPosition =
-                `-${x}px -${y}px`;
+        // 1. محرك لعبة الذاكرة الديناميكي
+        function buildMemoryGame(container, config) {
+            const grid = document.createElement("div");
+            grid.className = "memory-grid";
+            gameState.tempGameScore = 0;
 
-                piece.onclick = function(){
+            // مضاعفة حزمة الصور وخلط الترتيب ديناميكياً
+            let cardPack = [...config.images, ...config.images];
+            cardPack.sort(() => Math.random() - 0.5);
 
-                    if(selectedPiece === null){
+            let firstFlipped = null;
+            let secondFlipped = null;
+            let lockBoard = false;
 
-                        selectedPiece = index;
+            cardPack.forEach((imgSrc) => {
+                const card = document.createElement("div");
+                card.className = "memory-card";
+                card.dataset.id = imgSrc;
 
-                    }else{
+                card.innerHTML = `
+                    <div class="memory-card-front"><img src="${imgSrc}"></div>
+                    <div class="memory-card-back">🪶</div>
+                `;
 
-                        [piecesOrder[selectedPiece], piecesOrder[index]]
-                        =
-                        [piecesOrder[index], piecesOrder[selectedPiece]];
+                card.onclick = function() {
+                    if (lockBoard || card === firstFlipped || card.classList.contains('flipped')) return;
+                    card.classList.add('flipped');
 
-                        selectedPiece = null;
+                    if (!firstFlipped) {
+                        firstFlipped = card;
+                        return;
+                    }
+                    secondFlipped = card;
+                    lockBoard = true;
 
-                        renderPuzzle();
+                    // التحقق من تماثل الصور المطوية
+                    if(firstFlipped.dataset.id === secondFlipped.dataset.id) {
+                        gameState.tempGameScore++;
+                        firstFlipped = null; secondFlipped = null; lockBoard = false;
+                        if(gameState.tempGameScore === config.images.length) {
+                            endActiveMiniGame();
+                        }
+                    } else {
+                        setTimeout(() => {
+                            firstFlipped.classList.remove('flipped');
+                            secondFlipped.classList.remove('flipped');
+                            firstFlipped = null; secondFlipped = null; lockBoard = false;
+                        }, 800);
+                    }
+                };
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
+        }
 
-                        if(JSON.stringify(piecesOrder) === JSON.stringify([0,1,2,3])){
+        // 2. محرك ألعاب النقر على الصورة (التجميع والفروقات)
+        function buildClickableImageGame(container, config) {
+            gameState.tempGameScore = 0;
+            const wrapper = document.createElement("div");
+            wrapper.className = "image-wrapper";
 
-                            alert("أحسنت! 🎉");
+            const img = document.createElement("img");
+            img.src = config.bgImage;
+            wrapper.appendChild(img);
 
-                            nextBtn.style.display = "block";
+            // زرع الأهداف المتفاعلة الشفافة بناءً على المصفوفة الإحداثية المدخلة
+            config.targets.forEach(tar => {
+                const spot = document.createElement("div");
+                spot.className = "click-target";
+                spot.style.left = tar.x + "px";
+                spot.style.top = tar.y + "px";
+                spot.style.width = tar.size + "px";
+                spot.style.height = tar.size + "px";
+                
+                // تفعيل خط خارجي وهمي اختياري لبيئة الفحص البصري أثناء التطوير
+                // spot.style.border = "1px dashed red";
 
+                spot.onclick = function() {
+                    if(!spot.classList.contains("found")) {
+                        spot.classList.add("found");
+                        gameState.tempGameScore++;
+                        if(gameState.tempGameScore === config.targets.length) {
+                            endActiveMiniGame();
                         }
                     }
                 };
-
-                puzzleDiv.appendChild(piece);
-
+                wrapper.appendChild(spot);
             });
-
+            container.appendChild(wrapper);
         }
 
-        renderPuzzle();
+        // 3. محرك لعبة الأسئلة الديناميكية الجاذبة
+        function buildQuizGame(container, config) {
+            const qTitle = document.createElement("h3");
+            qTitle.innerText = config.question;
+            qTitle.style.marginBottom = "20px";
+            container.appendChild(qTitle);
 
-        container.appendChild(puzzleDiv);
-
-    }
-
-    /* ================= اللعبة 4 ================= */
-
-    else if (currentGameStep === 4) {
-
-        document.getElementById("gameTypeTitle").innerText =
-        "اللعبة 4: اكتشف الفروقات 🔍";
-
-        document.getElementById("gameInstructions").innerText =
-        "ابحث عن الفروقات الثلاثة";
-
-        let found = 0;
-
-        container.innerHTML = `
-        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-
-            <div style="position:relative">
-
-                <img src="DifferenceLeft.jpeg"
-                style="width:220px;border-radius:12px">
-
-                <div class="diff-point"
-                style="top:40px;left:80px"></div>
-
-                <div class="diff-point"
-                style="top:110px;left:150px"></div>
-
-                <div class="diff-point"
-                style="top:170px;left:60px"></div>
-
-            </div>
-
-            <img src="DifferenceRight.jpeg"
-            style="width:220px;border-radius:12px">
-
-        </div>
-
-        <p id="diffCounter">وجدت 0 / 3 فروقات</p>
-        `;
-
-        document.querySelectorAll(".diff-point").forEach(point=>{
-
-            point.onclick = function(){
-
-                if(this.classList.contains("found")) return;
-
-                this.classList.add("found");
-
-                found++;
-
-                document.getElementById("diffCounter").innerText =
-                `وجدت ${found} / 3 فروقات`;
-
-                if(found === 3){
-
-                    alert("أحسنت! اكتشفت جميع الفروقات 🎉");
-
-                    if(!state.completedDays.includes(state.currentDayIndex)){
-                        state.completedDays.push(state.currentDayIndex);
-                        state.flags++;
+            config.options.forEach((opt, idx) => {
+                const optBtn = document.createElement("div");
+                optBtn.className = "quiz-option";
+                optBtn.innerText = `${idx + 1}. ${opt}`;
+                
+                optBtn.onclick = function() {
+                    if(idx === config.correctIndex) {
+                        optBtn.style.borderColor = "#00ff00";
+                        optBtn.style.background = "rgba(0,255,0,0.2)";
+                        setTimeout(() => { endActiveMiniGame(); }, 500);
+                    } else {
+                        optBtn.style.borderColor = "var(--accent-red)";
+                        alert("حاول مرة أخرى يا شجاع، تذكر قصة العصفورة !");
                     }
+                };
+                container.appendChild(optBtn);
+            });
+        }
 
-                    showHome();
+        function endActiveMiniGame() {
+            document.getElementById("btn-next-game").style.display = "block";
+        }
+
+        function progressGameSequence() {
+            gameState.activeGameIndex++;
+            if(gameState.activeGameIndex < 4) {
+                loadGameEngine();
+            } else {
+                // إتمام المرحلة بالكامل وحصد مكافأة ريش الوفاء اليومي
+                alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على  مباركة 🪶!");
+                if(!gameState.completedDays.includes(gameState.activeDay)) {
+                    gameState.completedDays.push(gameState.activeDay);
+                    gameState.collectedFeathers++;
                 }
-            };
+                saveProgress();
+                buildDaysMap();
+                showScreen("scr-map");
+            }
+        }
 
-        });
+        function viewFinalPrize() {
+            showScreen("scr-prize");
+            const canvas = document.getElementById("canvas-box");
+            const status = document.getElementById("prize-status");
 
-    }
-    }
-function nextGame() {
-    if (currentGameStep < 4) {
-        currentGameStep++;
-        loadGameEngine();
-    }
-}
+            if(gameState.collectedFeathers >= 1) { // غير القيمة إلى 10 لربطها بالانتهاء الكلي الحقيقي
+                canvas.classList.add("completed");
+                status.innerText = "رائع! اكتملت لوحة لبيك يا حسين بريش المحبة والمواظبة!";
+            } else {
+                canvas.classList.remove("completed");
+                status.innerText = `تابع اللعب يومياً! رصيدك الآن ${gameState.collectedFeathers} ريشات والمطلوب 10 لتظهر اللوحة النورانية بالكامل.`;
+            }
+        }
 
-function switchScreen(id) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
-</script>
-
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+            window.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
