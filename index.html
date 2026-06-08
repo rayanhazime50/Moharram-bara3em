@@ -76,10 +76,6 @@ button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255, 0, 0, 0.4)
 
 #gameCanvas { background: #1a0000; border: 2px solid #ffd700; border-radius: 16px; display: block; margin: 15px auto; max-width: 100%; }
 
-.color-picker { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-.color-dot { width: 40px; height: 40px; border-radius: 50px; cursor: pointer; border: 2px solid white; }
-.paint-svg { width: 250px; height: 250px; background: rgba(255,255,255,0.9); border-radius: 16px; padding: 10px; margin: 20px auto; display: block; }
-.paint-clickable { fill: #ffffff; stroke: #000000; stroke-width: 1.5; cursor: pointer; transition: fill 0.2s; }
 
 .puzzle-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 240px; height: 240px; margin: 20px auto; }
 .puzzle-piece { width: 116px; height: 116px; background-size: 240px 240px; border: 2px dashed #ffd700; border-radius: 8px; cursor: pointer; }
@@ -225,7 +221,7 @@ function startGame() {
     let nameInput = document.getElementById("name");
     if (!nameInput) return;
     let name = nameInput.value.trim();
-    if (!name) return alert("من فضلك اكتب اسمك!");
+    if (!name) return alert(" اكتب اسمك!");
     state.name = name;
     showHome();
 }
@@ -363,42 +359,11 @@ function loadGameEngine() {
         }
         updateCanvas();
 
-    } else if (currentGameStep === 3) {
-        // --- 3. لعبة التلوين ---
-        document.getElementById("gameTypeTitle").innerText = "اللعبة 3: لوّن رسمة اليوم المخصصة 🎨";
-        document.getElementById("gameInstructions").innerText = "اختر لوناً، ثم اضغط على أجزاء الرسمة البيضاء لتلوينها!";
-        
-        let selectedColor = "#ffd700";
-        let colors = ["#8b0000", "#006400", "#ffd700", "#00008b", "#ffffff", "#000000"];
-        
-        let pickerDiv = document.createElement("div");
-        pickerDiv.className = "color-picker";
-        colors.forEach(c => {
-            let dot = document.createElement("div");
-            dot.className = "color-dot"; dot.style.backgroundColor = c;
-            dot.onclick = function() { selectedColor = c; };
-            pickerDiv.appendChild(dot);
-        });
-        container.appendChild(pickerDiv);
-        
-        let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute("viewBox", "0 0 100 100"); svg.className = "paint-svg";
-        
-        currentDay.svgPaths.forEach(pData => {
-            let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", pData);
-            path.className = "paint-clickable";
-            path.onclick = function() { 
-                path.style.fill = selectedColor; 
-                nextBtn.style.display = "block"; 
-            };
-            svg.appendChild(path);
-        });
-        container.appendChild(svg);
+    } 
 
-    } else if (currentGameStep === 4) {
+     else if (currentGameStep === 3) {
         // --- 4. لعبة البازل المؤتمتة (ينقله فوراً عند الفوز) ---
-        document.getElementById("gameTypeTitle").innerText = "اللعبة 4: رتّب بازل لوحة اليوم 🧩";
+        document.getElementById("gameTypeTitle").innerText = "اللعبة 3: رتّب بازل لوحة اليوم 🧩";
         document.getElementById("gameInstructions").innerText = "اضغط على قطعتين لتبديل أماكنهما وإكمال اللوحة الحسينية!";
         
         let puzzleDiv = document.createElement("div");
@@ -432,7 +397,7 @@ function loadGameEngine() {
                         // التحقق المباشر من الفوز والعودة التلقائية لصفحة الأيام
                         if (JSON.stringify(piecesOrder) === JSON.stringify([0, 1, 2, 3])) {
                             setTimeout(() => {
-                                alert("أحسنت يا بطل! لقد اكتملت الصورة 🌟");
+                                alert("أحسنت يا بطل/ة! لقد اكتملت الصورة 🌟");
                                 if (!state.completedDays.includes(state.currentDayIndex)) {
                                     state.completedDays.push(state.currentDayIndex);
                                     state.flags++;
@@ -451,7 +416,7 @@ function loadGameEngine() {
 }
 
 function nextGame() {
-    if (currentGameStep < 4) {
+    if (currentGameStep < 3) {
         currentGameStep++;
         loadGameEngine();
     }
