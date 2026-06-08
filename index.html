@@ -218,6 +218,32 @@
     background: rgba(0, 255, 0, 0.3);
     pointer-events: none; /* لمنع الضغط عليها مجدداً */
 }
+
+/* تنسيق لعبة تصنيف التصرفات */
+.classify-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.classify-img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.classify-btns {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+.btn-correct { background-color: #2e7d32; border-color: #4caf50; } /* أخضر */
+.btn-wrong { background-color: #c62828; border-color: #e53935; }   /* أحمر */
+
+
        
        
     </style>
@@ -292,7 +318,7 @@
 
         const gameDatabase = {
             1: {
-                title: "اليوم الأول: هلال المحرم الحزين",
+                title: "اليوم الأول: كيف نحيي عاشوراء؟  ",
                 audio: "day1.mp3",
                 games: [
                     {
@@ -316,7 +342,22 @@
     type: "puzzle",
     instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
     image: "Puzz1.jpeg" // ضع هنا مسار الصورة التي تريد من اللعبة أن تقسمها لـ 4 أجزاء
+},
+
+{
+    type: "classification",
+    instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
+    // مصفوفة الصور التي تريد من الطفل تصنيفها في هذا اليوم
+    items: [
+        { image: "correct1.jpeg", isCorrect: true },  // تصرف صحيح
+        { image: "wrong1.jpeg", isCorrect: false },  // تصرف خاطئ
+        { image: "correct2.jpeg", isCorrect: true },
+        { image: "correct3.jpeg", isCorrect: true },
+        { image: "wrong2.jpeg", isCorrect: false },
+        
+    ]
 }
+
                 ]
             }
             // بإمكانك نسخ التركيبة أعلاه وتكرارها من 2 إلى 10 لبقية الأيام بكل بساطة وسيعمل النظام ديناميكياً
@@ -456,6 +497,10 @@
     buildClickableImageGame(area, gameConfig);
 } else if(gameConfig.type === "puzzle") {
     buildPuzzleGame(area, gameConfig); // الدالة الجديدة للبازل
+}
+
+else if(gameConfig.type === "classification") {
+    buildClassificationGame(area, gameConfig); // الدالة الجديدة للتصنيف
 }
         }
 
@@ -710,6 +755,68 @@ function checkPuzzleSolved(gridElement, correctOrder) {
     }
     return true; // كل القطع في مكانها الصحيح
 }  
+
+// محرك لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
+function buildClassificationGame(container, config) {
+    let currentItemIndex = 0;
+
+    // حاوية اللعبة الأساسية
+    const mainBox = document.createElement("div");
+    mainBox.className = "classify-container";
+
+    // وسم عرض الصورة
+    const imgElement = document.createElement("img");
+    imgElement.className = "classify-img";
+    mainBox.appendChild(imgElement);
+
+    // حاوية الأزرار
+    const btnsBox = document.createElement("div");
+    btnsBox.className = "classify-btns";
+
+    const correctBtn = document.createElement("button");
+    correctBtn.className = "btn-correct";
+    correctBtn.innerText = "🟢 تصرف صحيح";
+
+    const wrongBtn = document.createElement("button");
+    wrongBtn.className = "btn-wrong";
+    wrongBtn.innerText = "🔴 تصرف خاطئ";
+
+    btnsBox.appendChild(correctBtn);
+    btnsBox.appendChild(wrongBtn);
+    mainBox.appendChild(btnsBox);
+    container.appendChild(mainBox);
+
+    // دالة لتحديث الصورة الحالية
+    function updateItem() {
+        if (currentItemIndex < config.items.length) {
+            imgElement.src = config.items[currentItemIndex].image;
+            document.getElementById("game-instruction").innerText = `صنف الصورة (${currentItemIndex + 1} من ${config.items.length})`;
+        } else {
+            // عندما ينتهي الطفل من تصنيف كل الصور في هذا اليوم
+            alert("رائع جداً! أنت تعرف التصرفات الصحيحة دائماً يا بطل الحسين! 🌟");
+            endActiveMiniGame();
+        }
+    }
+
+    // معالجة ضغط الأزرار والتحقق من الإجابة
+    function checkAnswer(chosenAnswer) {
+        let correctAnswer = config.items[currentItemIndex].isCorrect;
+        if (chosenAnswer === correctAnswer) {
+            currentItemIndex++;
+            updateItem();
+        } else {
+            alert("فكر مجدداً يا ذكي، هل هذا التصرف لائق؟ 🧐");
+        }
+    }
+
+    correctBtn.onclick = () => checkAnswer(true);
+    wrongBtn.onclick = () => checkAnswer(false);
+
+    // تشغيل اللعبة لأول صورة
+    updateItem();
+}
+
+
         
         
     </script>
