@@ -356,6 +356,15 @@
         { image: "wrong2.jpeg", isCorrect: false },
         
     ]
+},
+
+{
+    type: "camp_sorting",
+    instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
+    items: [
+        { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
+        { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" }
+    ]
 }
 
                 ]
@@ -374,7 +383,7 @@
         };
 
         window.onload = function() {
-            loadSavedProgress();
+            //loadSavedProgress();
         };
 
         function loadSavedProgress() {
@@ -388,9 +397,9 @@
         }
 
         function saveProgress() {
-            localStorage.setItem("ashura_player", gameState.playerName);
-            localStorage.setItem("ashura_feathers", gameState.collectedFeathers);
-            localStorage.setItem("ashura_days", JSON.stringify(gameState.completedDays));
+            //localStorage.setItem("ashura_player", gameState.playerName);
+            //localStorage.setItem("ashura_feathers", gameState.collectedFeathers);
+            //localStorage.setItem("ashura_days", JSON.stringify(gameState.completedDays));
         }
 
         function handleLogin() {
@@ -420,7 +429,10 @@
                 targetUnlockTime.setHours(16, 30, 0, 0); // الساعة 4:30 عصراً ثابتة
 
                 // الفتح التلقائي الحقيقي بناءً على توقيت الخادم / العميل الجاري
-                let isUnlocked = now >= targetUnlockTime || d === 1; // جعل اليوم الأول متاحاً فوراً للتأكد البرمجي
+                //let isUnlocked = now >= targetUnlockTime || d === 1; // جعل اليوم الأول متاحاً فوراً للتأكد البرمجي
+                
+                // تعديل للتجربة: فتح جميع الأيام فوراً وبدون شروط
+let isUnlocked = true;
                 let isDone = gameState.completedDays.includes(d);
 
                 if(isUnlocked) {
@@ -793,7 +805,7 @@ function buildClassificationGame(container, config) {
             document.getElementById("game-instruction").innerText = `صنف الصورة (${currentItemIndex + 1} من ${config.items.length})`;
         } else {
             // عندما ينتهي الطفل من تصنيف كل الصور في هذا اليوم
-            alert("رائع جداً! أنت تعرف التصرفات الصحيحة دائماً يا بطل الحسين! 🌟");
+            alert("رائع جداً! أنت تعرف التصرفات الصحيحة احسنت يا بطل الحسين! 🌟");
             endActiveMiniGame();
         }
     }
@@ -805,7 +817,7 @@ function buildClassificationGame(container, config) {
             currentItemIndex++;
             updateItem();
         } else {
-            alert("فكر مجدداً يا ذكي، هل هذا التصرف لائق؟ 🧐");
+            alert("فكر مجدداً يا ذكي  🧐");
         }
     }
 
