@@ -326,18 +326,18 @@
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور  المتطابقة!",
                         images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"] // 4 صور فريدة (ستتكرر لتصبح 8 بطاقات)
                     },
-                    /*{
+                    {
     type: "differences",
     instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
     originalImage: "DifferenceLeft.jpeg", // الصورة الأصلية (يمين)
     modifiedImage: "DifferenceRight.jpeg", // الصورة المعدلة (يسار)
     // الإحداثيات هنا تحسبها بدقة بناءً على حجم الصورة الواحدة المعروضة (وهنا تم ضبطها لتناسب عرض 228px لكل صورة)
     targets: [
-        { x: 202, y: 97, size: 25 },  // مكان العصفور
-        { x: 187, y: 185, size: 25 }, // مكان الزجاجة
-        { x: 207, y: 167, size: 30 }  // مكان الوعاء الفارغ
+        { x: 50, y: 50, size: 25 },  // مكان العصفور
+        { x: 60, y: 60, size: 25 }, // مكان الزجاجة
+        { x: 30, y: 30, size: 30 }  // مكان الوعاء الفارغ
     ]
-},*/
+},
                     {
     type: "puzzle",
     instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
@@ -356,16 +356,16 @@
         { image: "wrong2.jpeg", isCorrect: false },
         
     ]
-},
+}
 
-{
+/*{
     type: "camp_sorting",
     instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
     items: [
         { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
         { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" }
     ]
-}
+}*/
 
                 ]
             }
@@ -456,7 +456,7 @@ let isUnlocked = true;
 
         function launchDayStory(dayNum) {
             if(!gameDatabase[dayNum]) {
-                alert("سيتم إدراج بيانات هذا المجلس وعناوينه وألعابه لاحقاً من قِبلك بملف البيانات المتكامل.");
+                alert("سيتم إدراج بيانات هذا المجلس وعناوينه وألعابه لاحقاً   بملف البيانات المتكامل.");
                 return;
             }
             gameState.activeDay = dayNum;
