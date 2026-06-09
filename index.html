@@ -690,6 +690,7 @@ function buildClickableImageGame(container, config) {
         }
          
 // 4. محرك لعبة البازل الديناميكي (2×2) المطور والسريع - بدون تعليق
+// 4. محرك لعبة البازل الديناميكي (2×2) المطور والنهائي المضمون 100%
 function buildPuzzleGame(container, config) {
     const grid = document.createElement("div");
     grid.className = "puzzle-grid";
@@ -702,51 +703,54 @@ function buildPuzzleGame(container, config) {
         { id: 3, x: "100%", y: "100%" }  // أسفل يمين
     ];
 
-    // عمل نسخة ليتم خلطها
-    let currentOrder = [...correctOrder];
+    // عمل نسخة ليتم خلطها للطفل بصرياً
+    let shuffledOrder = [...correctOrder];
     
     // خلط القطع مع ضمان عدم ظهورها مرتبة بالصدفة
     do {
-        currentOrder.sort(() => Math.random() - 0.5);
-    } while (JSON.stringify(currentOrder) === JSON.stringify(correctOrder));
+        shuffledOrder.sort(() => Math.random() - 0.5);
+    } while (JSON.stringify(shuffledOrder) === JSON.stringify(correctOrder));
 
     let selectedPiece = null;
 
-    currentOrder.forEach((pos, index) => {
+    // هنا نقوم برسم المربعات الأربعة في أماكنها الثابتة بالـ DOM
+    correctOrder.forEach((pos, index) => {
         const piece = document.createElement("div");
         piece.className = "puzzle-piece";
         piece.style.backgroundImage = `url('${config.image}')`;
-        piece.style.backgroundPosition = `${pos.x} ${pos.y}`;
         
-        // هنا السر: نربط المعرف الرقمي الأصلي بالقطعة لحفظ هويتها
-        piece.dataset.correctId = pos.id; 
+        // المربعات تأخذ شكلها البصري المخلط من مصفوفة الخلط
+        piece.style.backgroundPosition = `${shuffledOrder[index].x} ${shuffledOrder[index].y}`;
+        piece.dataset.currentId = shuffledOrder[index].id; // الهوية الحالية المعروضة أمام الطفل
+        
+        // هنا السر: نثبت هوية المكان الصحيح الأصلي للمربع الثابت في الشبكة
+        piece.dataset.targetPlaceId = pos.id; 
 
         piece.onclick = function() {
             if (!selectedPiece) {
                 selectedPiece = piece;
-                piece.style.borderColor = "#00ff00"; // تلوين الإطار المختار
+                piece.style.borderColor = "#00ff00"; // تلوين الإطار المختار بالأخضر
             } else {
-                // تبديل شكل الخلفية (الـ CSS) بين القطعتين
+                // 1. تبديل شكل الخلفية البصرية (الـ CSS) بين القطعتين
                 let tempBGPos = piece.style.backgroundPosition;
                 piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
                 selectedPiece.style.backgroundPosition = tempBGPos;
 
-                // تبديل المعرف الرقمي (الـ ID) بين القطعتين ليتماشى مع التغيير البصري
-                let tempId = piece.dataset.correctId;
-                piece.dataset.correctId = selectedPiece.dataset.correctId;
-                selectedPiece.dataset.correctId = tempId;
+                // 2. تبديل المعرف الرقمي الحالي (currentId) الذي يتبع التغيير البصري
+                let tempId = piece.dataset.currentId;
+                piece.dataset.currentId = selectedPiece.dataset.currentId;
+                selectedPiece.dataset.currentId = tempId;
 
-                // إعادة اللون الطبيعي للإطار
+                // إعادة اللون الطبيعي للإطار الذهبي
                 selectedPiece.style.borderColor = "var(--gold)";
                 selectedPiece = null;
 
-                // فحص الحل فوراً بالاعتماد على الترتيب الرقمي للأقسام الأربعة
+                // 3. فحص الحل فوراً
                 if (checkPuzzleSolved(grid)) {
-                    // نضع تايم آوت صغير جداً (50 مللي ثانية) ليرى الطفل القطعة وهي تتحرك أولاً ثم يظهر الأليرت
                     setTimeout(() => {
                         alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
                         endActiveMiniGame();
-                    }, 500);
+                    }, 300);
                 }
             }
         };
@@ -756,21 +760,18 @@ function buildPuzzleGame(container, config) {
     container.appendChild(grid);
 }
 
-// دالة التحقق الرقمية الجديدة السريعة جداً
+// دالة التحقق الرقمية النهائية والمضمونة
 function checkPuzzleSolved(gridElement) {
     const pieces = gridElement.querySelectorAll(".puzzle-piece");
     
-    // بما أن الـ grid يحتوي على 4 قطع مرتبة من 0 إلى 3 في الـ DOM
-    // يجب أن تطابق هوية كل قطعة (correctId) ترتيبها الفعلي (i) في المصفوفة
     for (let i = 0; i < pieces.length; i++) {
-        if (parseInt(pieces[i].dataset.correctId) !== i) {
-            return false; // لو قطعة واحدة رقمها مش بمكانه الصحيح
+        // نتحقق ببساطة: هل الهوية الحالية للقطعة البصرية (currentId) تطابق مكانها الثابت المستهدف (targetPlaceId)؟
+        if (pieces[i].dataset.currentId !== pieces[i].dataset.targetPlaceId) {
+            return false; // إذا كان هناك مربع واحد غير مطابق، اللعبة مستمرة
         }
     }
-    return true; 
-   // الترتيب 100% صحيح
-   }
- //محرك لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
+    return true; } // تم الحل بنجاح 100%
+// لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
 function buildClassificationGame(container, config) {
     let currentItemIndex = 0;
 
