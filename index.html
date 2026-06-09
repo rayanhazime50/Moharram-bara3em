@@ -157,95 +157,185 @@
         .feather-canvas img { width: 90%; height: auto; opacity: 0.1; transition: opacity 1s ease; }
         .feather-canvas.completed img { opacity: 1; animation: pulse 2s infinite; }
         
-    /* تنسيق شبكة البازل 2×2 */
-.puzzle-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
-    width: 300px;
-    height: 300px;
-    margin: 20px auto;
-}
-.puzzle-piece {
-    width: 100%;
-    height: 100%;
-    border: 2px solid var(--gold);
-    border-radius: 8px;
-    cursor: pointer;
-    background-size: 300px 300px; /* يجب أن يطابق حجم الشبكة */
-    transition: transform 0.2s;
-}
-.puzzle-piece:hover { transform: scale(1.02); }   
+        /* تنسيق شبكة البازل 2×2 */
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            background-size: 300px 300px;
+            transition: transform 0.2s;
+        }
+        .puzzle-piece:hover { transform: scale(1.02); }   
 
-/* حاوية عرض الصورتين جنباً إلى جنب */
-.diff-game-flex {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    max-width: 470px;
-    margin: 15px auto;
-}
+        /* حاوية عرض الصورتين جنباً إلى جنب */
+        .diff-game-flex {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 470px;
+            margin: 15px auto;
+        }
 
-/* صندوق الصورة الواحدة */
-.diff-img-box {
-    position: relative;
-    width: 228px; /* تم تصغير العرض ليناسب شاشات الموبايل عند وضع صورتين متجاورتين */
-    height: 256px;
-    border: 2px solid var(--gold);
-    border-radius: 8px;
-    overflow: hidden;
-}
+        /* صندوق الصورة الواحدة */
+        .diff-img-box {
+            position: relative;
+            width: 228px;
+            height: 256px;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .diff-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+        }
 
-.diff-img-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-}
+        /* دائرة تحديد الفروقات الشفافة */
+        .diff-spot-target {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            border: 1px dashed red; 
+        }
+        .diff-spot-target.found {
+            border: 3px solid #00ff00 !important;
+            background: rgba(0, 255, 0, 0.3);
+            pointer-events: none;
+        }
 
-/* دائرة تحديد الفروقات الشفافة (توضع فوق الصورة اليسرى المعدلة فقط) */
-.diff-spot-target {
-    position: absolute;
-    border-radius: 50%;
-    cursor: pointer;
-    transform: translate(-50%, -50%); /* لجعل النقطة تبدأ من مركز الإحداثي */
-    /* يمكنك إزالة التعليق عن السطر أدناه أثناء اختبارك لتحديد الأماكن بسهولة برؤية دائرة حمراء */
-     border: 1px dashed red; 
-}
+        /* تنسيق لعبة تصنيف التصرفات */
+        .classify-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .classify-img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border: 3px solid var(--gold);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .classify-btns {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-correct { background-color: #2e7d32; border-color: #4caf50; }
+        .btn-wrong { background-color: #c62828; border-color: #e53935; }
 
-.diff-spot-target.found {
-    border: 3px solid #00ff00 !important;
-    background: rgba(0, 255, 0, 0.3);
-    pointer-events: none; /* لمنع الضغط عليها مجدداً */
-}
+        /* تنسيق لعبة إكمال النمط */
+        .pattern-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
+        }
+        .pattern-display-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px dashed var(--gold);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .pattern-box {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+        }
+        .pattern-box.blank {
+            border: 2px dashed #777;
+            background-color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--gold);
+        }
+        .pattern-options-title {
+            font-size: 16px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        .pattern-options-line {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .pattern-opt-btn {
+            width: 65px;
+            height: 65px;
+            border: 3px solid #444;
+            border-radius: 12px;
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .pattern-opt-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+        }
 
-/* تنسيق لعبة تصنيف التصرفات */
-.classify-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-.classify-img {
-    width: 250px;
-    height: 250px;
-    object-fit: cover;
-    border: 3px solid var(--gold);
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-.classify-btns {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    justify-content: center;
-}
-.btn-correct { background-color: #2e7d32; border-color: #4caf50; } /* أخضر */
-.btn-wrong { background-color: #c62828; border-color: #e53935; }   /* أحمر */
-
-
-       
-       
+        /* تنسيق صندوق عرض الأيقونة والنص في لعبة فرز المعسكرات */
+        .emoji-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: #333;
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            width: 80%;
+        }
+        .camp-item-icon {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+        .camp-item-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .camp-btns-wrapper {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-camp-hussein { background-color: #154233; border-color: var(--gold); }
+        .btn-camp-yazeed { background-color: var(--accent-red); border-color: var(--gold); }
     </style>
 </head>
 <body>
@@ -254,7 +344,7 @@
         <div class="avatar-container">🕊️</div>
         <h1>العصفورة </h1>
         <h2>قصص وعِبر من أرض كربلاء</h2>
-        <p>مرحباً بك يا بطل الصغير، اكتب اسمك لنبدأ الرحلة الممتعة معاً كل يوم ومواكبة مجالسنا الحسينية.</p>
+        <p>مرحباً بك يا صغيري، اكتب اسمك لنبدأ الرحلة الممتعة معاً كل يوم ومواكبة قصصنا الحسينية.</p>
         <input type="text" id="child-name" class="input-box" placeholder="اكتب اسمك هنا...">
         <button onclick="handleLogin()">ابدأ الرحلة المشوقة 🏁</button>
     </div>
@@ -267,13 +357,13 @@
         <h3>خريطة الأيام العشرة</h3>
         <p>تفتح قصة ولعبة كل يوم تلقائياً عند الساعة 4:30 عصراً</p>
         <div class="days-grid" id="map-grid"></div>
-        <button id="btn-prize-screen" style="display:none; width:100%; margin-top:20px; background-color:var(--accent-red);" onclick="viewFinalPrize()">🎁 هدية التزامك بالريش</button>
+        <button id="btn-prize-screen" style="display:none; width:100%; margin-top:20px; background-color:var(--accent-red);" onclick="viewFinalPrize()">🎁 هدية التزامك باللعب طيلة العشرة الأيام</button>
     </div>
 
     <div id="scr-story" class="screen">
         <h2 id="story-day-title">اليوم...</h2>
         <div class="avatar-container">🕊️</div>
-        <p>أنصت جيداً لقصة العصفورة  لتستطيع حل الألعاب التفاعلية بعدها بنجاح:</p>
+        <p>أنصت جيداً لقصة العصفورة لتستطيع حل الألعاب التفاعلية بعدها بنجاح:</p>
         
         <div style="background:#222; padding:20px; border-radius:15px; border:1px solid #444; width:90%; margin:15px 0;">
             <audio id="audio-player" controls style="width:100%;">
@@ -282,7 +372,7 @@
             </audio>
         </div>
         <span id="audio-lock-msg" style="color:#aaa; font-size:14px; margin-bottom:10px;">🔒 استمع للقصة كاملة لفتح الألعاب</span>
-        <button id="btn-go-games" disabled onclick="initGameSequence()">انتقل للألعاب الأربعة (0/4) 🎮</button>
+        <button id="btn-go-games" disabled onclick="initGameSequence()">هيا بنا نجمع الريشات معًا 🎮</button>
         <button onclick="showScreen('scr-map')" style="background:transparent; border-color:transparent; font-size:14px; color:#aaa;">رجوع للخريطة</button>
     </div>
 
@@ -290,8 +380,7 @@
         <h2 id="game-title">اسم اللعبة التفاعلية</h2>
         <p id="game-instruction">ماذا يفعل الطفل هنا؟</p>
         
-        <div class="game-area" id="main-game-area">
-            </div>
+        <div class="game-area" id="main-game-area"></div>
 
         <button id="btn-next-game" style="display:none;" onclick="progressGameSequence()">تابع اللعبة التالية ➡️</button>
     </div>
@@ -308,82 +397,97 @@
     </div>
 
     <script>
-        /* ==========================================================================
-           تنظيم ومصفوفة بيانات اللعبة الديناميكية (Dynamic Game Data Object)
-           بإمكانك تغيير مسارات الصور، الأصوات، والأسئلة من هنا بكل سلاسة ومرونة
-           ========================================================================== */
-        
-        // تاريخ ووقت انطلاق اللعبة الموحد للجميع (السنة، الشهر يبدأ من 0، اليوم)
-        const LAUNCH_DATE = new Date(2026, 5, 8); // مثال: 8 يونيو 2026
+        const LAUNCH_DATE = new Date(2026, 5, 8); // 8 يونيو 2026
 
         const gameDatabase = {
             1: {
-                title: "اليوم الأول: كيف نحيي عاشوراء؟  ",
+                title: "اليوم الأول: مظاهر إحياء عاشوراء .",
                 audio: "day1.mp3",
                 games: [
                     {
                         type: "memory",
-                        instruction: "اطووا البطاقات الممتعة وجدوا الصور  المتطابقة!",
-                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"] // 4 صور فريدة (ستتكرر لتصبح 8 بطاقات)
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
                     },
                     {
-    type: "differences",
-    instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
-    originalImage: "DifferenceRight.jpeg", // الصورة الأصلية (يمين)
-    modifiedImage: "DifferenceLeft.jpeg", // الصورة المعدلة (يسار)
-    // الإحداثيات هنا تحسبها بدقة بناءً على حجم الصورة الواحدة المعروضة (وهنا تم ضبطها لتناسب عرض 228px لكل صورة)
-    targets: [
-        { x: 30, y: 30, size: 25 },  // مكان العصفور
-        { x: 50, y: 50, size: 25 }, // مكان الزجاجة
-        { x: 60, y: 60, size: 30 }  // مكان الوعاء الفارغ
-    ]
-},
+                        type: "differences",
+                        instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
+                        originalImage: "DifferenceRight.jpeg",
+                        modifiedImage: "DifferenceLeft.jpeg",
+                        targets: [
+                            { x: 30, y: 30, size: 25 },
+                            { x: 50, y: 50, size: 25 },
+                            { x: 60, y: 60, size: 30 }
+                        ]
+                    },
                     {
-    type: "puzzle",
-    instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
-    image: "Puzz1.jpeg" // ضع هنا مسار الصورة التي تريد من اللعبة أن تقسمها لـ 4 أجزاء
-},
-
-{
-    type: "classification",
-    instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
-    // مصفوفة الصور التي تريد من الطفل تصنيفها في هذا اليوم
-    items: [
-        { image: "correct1.jpeg", isCorrect: true },  // تصرف صحيح
-        { image: "wrong1.jpeg", isCorrect: false },  // تصرف خاطئ
-        { image: "correct2.jpeg", isCorrect: true },
-        { image: "correct3.jpeg", isCorrect: true },
-        { image: "wrong2.jpeg", isCorrect: false },
-        
-    ]
-}
-
-/*{
-    type: "camp_sorting",
-    instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
-    items: [
-        { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
-        { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" }
-    ]
-}*/
-
+                        type: "puzzle",
+                        instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
+                        image: "Puzz1.jpeg"
+                    },
+                    {
+                        type: "classification",
+                        instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
+                        items: [
+                            { image: "correct1.jpeg", isCorrect: true },
+                            { image: "wrong1.jpeg", isCorrect: false },
+                            { image: "correct2.jpeg", isCorrect: true },
+                            { image: "correct3.jpeg", isCorrect: true },
+                            { image: "wrong2.jpeg", isCorrect: false }
+                        ]
+                    }
+                ]
+            },
+            2: {
+                title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
+                audio: "day2.m4a",
+                games: [
+                    {
+                        type: "camp_sorting",
+                        instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
+                        items: [
+                            { icon: "hussien.jpeg", text: "الحب والرحمة", belongsTo: "hussein" },
+                            { icon: "yazeed.jpeg", text: "الغدر والأنانية", belongsTo: "yazeed" }
+                        ]
+                    },
+                    {
+                        type: "classification",
+                        instruction: "انظر إلى الصورة جيداً، و صنّف الافعال التي تمثّل جيش الإمام الحسين و جيش الأعداء؟ 🤔",
+                        items: [
+                            { image: "correct1.jpeg", isCorrect: true },
+                            { image: "wrong1.jpeg", isCorrect: false },
+                            { image: "correct2.jpeg", isCorrect: true },
+                            { image: "correct3.jpeg", isCorrect: true },
+                            { image: "wrong2.jpeg", isCorrect: false }
+                        ]
+                    },
+                    {
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
+                    },
+                    {
+                        type: "pattern",
+                        instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
+                        sequence: ["boy.jpeg", "girl.jpeg"], 
+                        correctAnswers: ["boy.jpeg", "boy.jpeg", "girl.jpeg"], 
+                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
+                    }
                 ]
             }
-            // بإمكانك نسخ التركيبة أعلاه وتكرارها من 2 إلى 10 لبقية الأيام بكل بساطة وسيعمل النظام ديناميكياً
         };
 
-        // متغيرات النظام وتتبع حالة اللاعب الحالية
         let gameState = {
             playerName: "",
             collectedFeathers: 0,
-            completedDays: [], // الأيام المكتملة مخزنة
+            completedDays: [],
             activeDay: 1,
             activeGameIndex: 0,
             tempGameScore: 0
         };
 
         window.onload = function() {
-            //loadSavedProgress();
+            // loadSavedProgress(); // معطل للتجربة من الصفر دائماً عند التحديث
         };
 
         function loadSavedProgress() {
@@ -397,9 +501,9 @@
         }
 
         function saveProgress() {
-            //localStorage.setItem("ashura_player", gameState.playerName);
-            //localStorage.setItem("ashura_feathers", gameState.collectedFeathers);
-            //localStorage.setItem("ashura_days", JSON.stringify(gameState.completedDays));
+            // localStorage.setItem("ashura_player", gameState.playerName);
+            // localStorage.setItem("ashura_feathers", gameState.collectedFeathers);
+            // localStorage.setItem("ashura_days", JSON.stringify(gameState.completedDays));
         }
 
         function handleLogin() {
@@ -413,26 +517,15 @@
             showScreen("scr-map");
         }
 
-        // بناء خريطة الأيام ديناميكياً بناءً على تاريخ الانطلاق الثابت والوقت الحاضر 4:30 عصراً
         function buildDaysMap() {
             const grid = document.getElementById("map-grid");
             grid.innerHTML = "";
-            const now = new Date();
 
             for(let d = 1; d <= 10; d++) {
                 const node = document.createElement("div");
                 node.className = "day-node";
                 
-                // حساب تاريخ استحقاق اليوم البرمجي بدقة
-                let targetUnlockTime = new Date(LAUNCH_DATE);
-                targetUnlockTime.setDate(LAUNCH_DATE.getDate() + (d - 1));
-                targetUnlockTime.setHours(16, 30, 0, 0); // الساعة 4:30 عصراً ثابتة
-
-                // الفتح التلقائي الحقيقي بناءً على توقيت الخادم / العميل الجاري
-                //let isUnlocked = now >= targetUnlockTime || d === 1; // جعل اليوم الأول متاحاً فوراً للتأكد البرمجي
-                
-                // تعديل للتجربة: فتح جميع الأيام فوراً وبدون شروط
-let isUnlocked = true;
+                let isUnlocked = true; // مفتوح دائماً لأغراض فحص الكود
                 let isDone = gameState.completedDays.includes(d);
 
                 if(isUnlocked) {
@@ -449,25 +542,23 @@ let isUnlocked = true;
                 grid.appendChild(node);
             }
 
-            if(gameState.collectedFeathers >= 1) { // يفضل ترفيعها لـ 10 عند ملء كافة الأيام
+            if(gameState.collectedFeathers >= 1) {
                 document.getElementById("btn-prize-screen").style.display = "block";
             }
         }
 
         function launchDayStory(dayNum) {
             if(!gameDatabase[dayNum]) {
-                alert("سيتم إدراج بيانات هذا المجلس وعناوينه وألعابه لاحقاً   بملف البيانات المتكامل.");
+                alert("سيتم إدراج بيانات هذا المجلس وعناوينه وألعابه لاحقاً بملف البيانات المتكامل.");
                 return;
             }
             gameState.activeDay = dayNum;
             document.getElementById("story-day-title").innerText = gameDatabase[dayNum].title;
             
-            // تهيئة مشغل الصوت
             const player = document.getElementById("audio-player");
             document.getElementById("audio-src").src = gameDatabase[dayNum].audio;
             player.load();
 
-            // فك قفل أزرار اللعب ديناميكياً عند إكمال سماع التسجيل
             document.getElementById("btn-go-games").disabled = true;
             document.getElementById("audio-lock-msg").style.display = "inline";
 
@@ -476,15 +567,10 @@ let isUnlocked = true;
                 document.getElementById("audio-lock-msg").style.display = "none";
             };
 
-            // تخطي اختياري للتسهيل أثناء المراجعة والاختبار البصري من المطور
             document.getElementById("audio-lock-msg").onclick = () => { player.onended(); };
-
             showScreen("scr-story");
         }
 
-        /* ==========================================================================
-           محرك توليد وإدارة تتابع الألعاب الأربعة المدمجة ديناميكياً
-           ========================================================================== */
         function initGameSequence() {
             gameState.activeGameIndex = 0;
             loadGameEngine();
@@ -500,29 +586,29 @@ let isUnlocked = true;
             document.getElementById("game-instruction").innerText = gameConfig.instruction;
 
             const area = document.getElementById("main-game-area");
-            area.innerHTML = ""; // تنظيف ساحة العرض السابقة
+            area.innerHTML = "";
 
-            // فحص نوع اللعبة المطلوية وبناء مكوناتها الرياضية التفاعلية
             if(gameConfig.type === "memory") {
-    buildMemoryGame(area, gameConfig);
-} else if(gameConfig.type === "collect" || gameConfig.type === "differences") {
-    buildClickableImageGame(area, gameConfig);
-} else if(gameConfig.type === "puzzle") {
-    buildPuzzleGame(area, gameConfig); // الدالة الجديدة للبازل
-}
-
-else if(gameConfig.type === "classification") {
-    buildClassificationGame(area, gameConfig); // الدالة الجديدة للتصنيف
-}
+                buildMemoryGame(area, gameConfig);
+            } else if(gameConfig.type === "differences") {
+                buildClickableImageGame(area, gameConfig);
+            } else if(gameConfig.type === "puzzle") {
+                buildPuzzleGame(area, gameConfig);
+            } else if(gameConfig.type === "classification") {
+                buildClassificationGame(area, gameConfig);
+            } else if(gameConfig.type === "camp_sorting") {
+                buildCampSortingGame(area, gameConfig);
+            } else if(gameConfig.type === "pattern") {
+                buildPatternGame(area, gameConfig);
+            }
         }
 
-        // 1. محرك لعبة الذاكرة الديناميكي
+        // 1. لعبة الذاكرة
         function buildMemoryGame(container, config) {
             const grid = document.createElement("div");
             grid.className = "memory-grid";
             gameState.tempGameScore = 0;
 
-            // مضاعفة حزمة الصور وخلط الترتيب ديناميكياً
             let cardPack = [...config.images, ...config.images];
             cardPack.sort(() => Math.random() - 0.5);
 
@@ -551,7 +637,6 @@ else if(gameConfig.type === "classification") {
                     secondFlipped = card;
                     lockBoard = true;
 
-                    // التحقق من تماثل الصور المطوية
                     if(firstFlipped.dataset.id === secondFlipped.dataset.id) {
                         gameState.tempGameScore++;
                         firstFlipped = null; secondFlipped = null; lockBoard = false;
@@ -571,81 +656,320 @@ else if(gameConfig.type === "classification") {
             container.appendChild(grid);
         }
 
-        // 2. محرك ألعاب النقر على الصورة (التجميع والفروقات)
-        // محرك لعبة الفروقات المطور (صورتين بجانب بعضهما)
-function buildClickableImageGame(container, config) {
-    gameState.tempGameScore = 0;
+        // 2. لعبة الفروقات
+        function buildClickableImageGame(container, config) {
+            gameState.tempGameScore = 0;
 
-    if (config.type === "differences") {
-        const flexContainer = document.createElement("div");
-        flexContainer.className = "diff-game-flex";
-
-        // بناء الصندوق الأيمن (الصورة الأصلية)
-        const rightBox = document.createElement("div");
-        rightBox.className = "diff-img-box";
-        rightBox.innerHTML = `<img src="${config.originalImage}">`;
-
-        // بناء الصندوق الأيسر (الصورة المعدلة)
-        const leftBox = document.createElement("div");
-        leftBox.className = "diff-img-box";
-        
-        const modImg = document.createElement("img");
-        modImg.src = config.modifiedImage;
-        leftBox.appendChild(modImg);
-
-        // توزيع الفروقات ديناميكياً فوق الصورة اليسرى
-        config.targets.forEach(tar => {
-            const spot = document.createElement("div");
-            spot.className = "diff-spot-target";
-            spot.style.left = tar.x + "px";
-            spot.style.top = tar.y + "px";
-            spot.style.width = tar.size + "px";
-            spot.style.height = tar.size + "px";
-
-            spot.onclick = function() {
-                if (!spot.classList.contains("found")) {
-                    spot.classList.add("found");
-                    gameState.tempGameScore++;
-                    
-                    document.getElementById("game-instruction").innerText = `رائع! المتبقي: ${config.targets.length - gameState.tempGameScore} فروقات`;
-
-                    if (gameState.tempGameScore === config.targets.length) {
-                        alert("أحسنت يا بطل! لقد عثرت على جميع الفروقات بين الصورتين بنجاح! 🔍🎉");
-                        endActiveMiniGame();
-                    }
-                }
-            };
-            leftBox.appendChild(spot);
-        });
-
-        flexContainer.appendChild(rightBox); // الأصلية يمين
-        flexContainer.appendChild(leftBox);  // المعدلة يسار
-        container.appendChild(flexContainer);
-    }
-}        // 3. محرك لعبة الأسئلة الديناميكية الجاذبة
-        function buildQuizGame(container, config) {
-            const qTitle = document.createElement("h3");
-            qTitle.innerText = config.question;
-            qTitle.style.marginBottom = "20px";
-            container.appendChild(qTitle);
-
-            config.options.forEach((opt, idx) => {
-                const optBtn = document.createElement("div");
-                optBtn.className = "quiz-option";
-                optBtn.innerText = `${idx + 1}. ${opt}`;
+            if (config.type === "differences") {
+                const flexContainer = document.createElement("div");
+                flexContainer.className = "diff-game-flex";
                 
+                const rightBox = document.createElement("div");
+                rightBox.className = "diff-img-box";
+                rightBox.innerHTML = `<img src="${config.originalImage}">`;
+
+                const leftBox = document.createElement("div");
+                leftBox.className = "diff-img-box";
+                
+                const modImg = document.createElement("img");
+                modImg.src = config.modifiedImage;
+                leftBox.appendChild(modImg);
+
+                config.targets.forEach(tar => {
+                    const spot = document.createElement("div");
+                    spot.className = "diff-spot-target";
+                    spot.style.left = tar.x + "px";
+                    spot.style.top = tar.y + "px";
+                    spot.style.width = tar.size + "px";
+                    spot.style.height = tar.size + "px";
+
+                    spot.onclick = function() {
+                        if (!spot.classList.contains("found")) {
+                            spot.classList.add("found");
+                            gameState.tempGameScore++;
+                            
+                            document.getElementById("game-instruction").innerText = `رائع! المتبقي: ${config.targets.length - gameState.tempGameScore} فروقات`;
+
+                            if (gameState.tempGameScore === config.targets.length) {
+                                alert("أحسنت يا بطل! لقد عثرت على جميع الفروقات بين الصورتين بنجاح! 🔍🎉");
+                                endActiveMiniGame();
+                            }
+                        }
+                    };
+                    leftBox.appendChild(spot);
+                });
+
+                flexContainer.appendChild(rightBox);
+                flexContainer.appendChild(leftBox);
+                container.appendChild(flexContainer);
+            }
+        }
+
+        // 3. لعبة تصنيف التصرفات (صحيح / خاطئ)
+        function buildClassificationGame(container, config) {
+            let itemIndex = 0;
+
+            const mainBox = document.createElement("div");
+            mainBox.className = "classify-container";
+
+            const imgEl = document.createElement("img");
+            imgEl.className = "classify-img";
+
+            const btnsBox = document.createElement("div");
+            btnsBox.className = "classify-btns";
+
+            const rightBtn = document.createElement("button");
+            rightBtn.className = "btn-correct";
+            rightBtn.innerText = "✔️ تصرف صحيح";
+
+            const wrongBtn = document.createElement("button");
+            wrongBtn.className = "btn-wrong";
+            wrongBtn.innerText = "❌ تصرف خاطئ";
+
+            btnsBox.appendChild(rightBtn);
+            btnsBox.appendChild(wrongBtn);
+            mainBox.appendChild(imgEl);
+            mainBox.appendChild(btnsBox);
+            container.appendChild(mainBox);
+
+            function showNextItem() {
+                if (itemIndex < config.items.length) {
+                    imgEl.src = config.items[itemIndex].image;
+                } else {
+                    alert("ممتاز جداً! لقد نجحت في تصنيف كافة التصرفات والسلوكيات بنجاح! 🌟👏");
+                    endActiveMiniGame();
+                }
+            }
+
+            function verifyChoice(userChoice) {
+                if (userChoice === config.items[itemIndex].isCorrect) {
+                    itemIndex++;
+                    showNextItem();
+                } else {
+                    alert("فكر مجدداً يا ذكي، هل هذا التصرف يرضي العصفورة؟ 🧐");
+                }
+            }
+
+            rightBtn.onclick = () => verifyChoice(true);
+            wrongBtn.onclick = () => verifyChoice(false);
+
+            showNextItem();
+        }
+
+        // 4. لعبة فرز المعسكرات (أيقونات وصور صغيرة)
+        function buildCampSortingGame(container, config) {
+            let currentItemIndex = 0;
+
+            const mainBox = document.createElement("div");
+            mainBox.className = "camp-container";
+
+            const displayDiv = document.createElement("div");
+            displayDiv.className = "emoji-display";
+            
+            const iconImg = document.createElement("img");
+            iconImg.className = "camp-item-icon";
+            
+            const textSpan = document.createElement("span");
+            textSpan.className = "camp-item-text";
+
+            displayDiv.appendChild(iconImg);
+            displayDiv.appendChild(textSpan);
+            mainBox.appendChild(displayDiv);
+
+            const btnsWrapper = document.createElement("div");
+            btnsWrapper.className = "camp-btns-wrapper";
+
+            const husseinBtn = document.createElement("button");
+            husseinBtn.className = "btn-camp-hussein";
+            husseinBtn.innerText = "🏴 معسكر الحسين (ع)";
+
+            const yazeedBtn = document.createElement("button");
+            yazeedBtn.className = "btn-camp-yazeed";
+            yazeedBtn.innerText = "🔥 المعسكر الآخر";
+
+            btnsWrapper.appendChild(husseinBtn);
+            btnsWrapper.appendChild(yazeedBtn);
+            mainBox.appendChild(btnsWrapper);
+            container.appendChild(mainBox);
+
+            function nextItem() {
+                if (currentItemIndex < config.items.length) {
+                    const currentItem = config.items[currentItemIndex];
+                    iconImg.src = currentItem.icon;
+                    textSpan.innerText = currentItem.text;
+                    document.getElementById("game-instruction").innerText = `فرز الصفات والأيقونات (${currentItemIndex + 1} من ${config.items.length})`;
+                } else {
+                    alert("أحسنت يا بطل! لقد اخترت معسكر الحق والخير دائماً مع الإمام الحسين (ع)! 🌟🏴");
+                    endActiveMiniGame();
+                }
+            }
+
+            function verifyChoice(choice) {
+                let correctCamp = config.items[currentItemIndex].belongsTo;
+                if (choice === correctCamp) {
+                    currentItemIndex++;
+                    nextItem();
+                } else {
+                    alert("فكر مجدداً يا ذكي، أين تنتمي هذه الصفة الطيبة؟ 🧐");
+                }
+            }
+
+            husseinBtn.onclick = () => verifyChoice("hussein");
+            yazeedBtn.onclick = () => verifyChoice("yazeed");
+
+            nextItem();
+        }
+
+        // 5. لعبة إكمال وتكرار الأنماط الذكية
+        function buildPatternGame(container, config) {
+            let currentBlankIndex = 0;
+            let childAnswers = [];
+
+            const mainBox = document.createElement("div");
+            mainBox.className = "pattern-container";
+
+            const displayLine = document.createElement("div");
+            displayLine.className = "pattern-display-line";
+
+            config.sequence.forEach(imgSrc => {
+                const box = document.createElement("div");
+                box.className = "pattern-box";
+                box.style.backgroundImage = `url('${imgSrc}')`;
+                displayLine.appendChild(box);
+            });
+
+            const blankBoxesArray = [];
+            config.correctAnswers.forEach(() => {
+                const blankBox = document.createElement("div");
+                blankBox.className = "pattern-box blank";
+                blankBox.innerText = "؟";
+                displayLine.appendChild(blankBox);
+                blankBoxesArray.push(blankBox);
+            });
+            mainBox.appendChild(displayLine);
+
+            const title = document.createElement("div");
+            title.className = "pattern-options-title";
+            title.innerText = "اختر الصورة المناسبة للفراغ من هنا 👇:";
+            mainBox.appendChild(title);
+
+            const optionsLine = document.createElement("div");
+            optionsLine.className = "pattern-options-line";
+
+            config.options.forEach(imgSrc => {
+                const optBtn = document.createElement("div");
+                optBtn.className = "pattern-opt-btn";
+                optBtn.style.backgroundImage = `url('${imgSrc}')`;
+
                 optBtn.onclick = function() {
-                    if(idx === config.correctIndex) {
-                        optBtn.style.borderColor = "#00ff00";
-                        optBtn.style.background = "rgba(0,255,0,0.2)";
-                        setTimeout(() => { endActiveMiniGame(); }, 500);
-                    } else {
-                        optBtn.style.borderColor = "var(--accent-red)";
-                        alert("حاول مرة أخرى يا شجاع، تذكر قصة العصفورة !");
+                    if (currentBlankIndex < config.correctAnswers.length) {
+                        blankBoxesArray[currentBlankIndex].innerText = "";
+                        blankBoxesArray[currentBlankIndex].style.backgroundImage = `url('${imgSrc}')`;
+                        blankBoxesArray[currentBlankIndex].style.borderStyle = "solid";
+                        blankBoxesArray[currentBlankIndex].style.borderColor = "var(--gold)";
+
+                        childAnswers.push(imgSrc);
+                        currentBlankIndex++;
+
+                        if (childAnswers.length === config.correctAnswers.length) {
+                            verifyPatternSolution(config.correctAnswers, childAnswers, blankBoxesArray);
+                        }
                     }
                 };
-                container.appendChild(optBtn);
+                optionsLine.appendChild(optBtn);
             });
+            mainBox.appendChild(optionsLine);
+            container.appendChild(mainBox);
+        }
+
+        function verifyPatternSolution(correctArray, childArray, boxes) {
+            let isAllCorrect = true;
+            for (let i = 0; i < correctArray.length; i++) {
+                if (correctArray[i] !== childArray[i]) {
+                    isAllCorrect = false;
+                    break;
+                }
+            }
+
+            if (isAllCorrect) {
+                setTimeout(() => {
+                    alert("رائع مذهل! لقد اكتشفت النمط الصحيح وأكملت اللوحة بذكاء كبير! 🌟👏");
+                    endActiveMiniGame();
+                }, 400);
+            } else {
+                setTimeout(() => {
+                    alert("أوه! النمط غير صحيح تماماً. دعنا نحاول مجدداً يا بطل التركيز! 🔄");
+                    loadGameEngine();
+                }, 400);
+            }
+        }
+
+        // 6. لعبة البازل (2×2) النهائية السريعة المضمونة
+        function buildPuzzleGame(container, config) {
+            const grid = document.createElement("div");
+            grid.className = "puzzle-grid";
+
+            const correctOrder = [
+                { id: 0, x: "0%", y: "0%" },
+                { id: 1, x: "100%", y: "0%" },
+                { id: 2, x: "0%", y: "100%" },
+                { id: 3, x: "100%", y: "100%" }
+            ];
+
+            let shuffledOrder = [...correctOrder];
+            
+            do {
+                shuffledOrder.sort(() => Math.random() - 0.5);
+            } while (JSON.stringify(shuffledOrder) === JSON.stringify(correctOrder));
+
+            let selectedPiece = null;
+
+            correctOrder.forEach((pos, index) => {
+                const piece = document.createElement("div");
+                piece.className = "puzzle-piece";
+                piece.style.backgroundImage = `url('${config.image}')`;
+                
+                piece.style.backgroundPosition = `${shuffledOrder[index].x} ${shuffledOrder[index].y}`;
+                piece.dataset.currentId = shuffledOrder[index].id;
+                piece.dataset.targetPlaceId = pos.id;
+
+                piece.onclick = function() {
+                    if (!selectedPiece) {
+                        selectedPiece = piece;
+                        piece.style.borderColor = "#00ff00";
+                    } else {
+                        let tempBGPos = piece.style.backgroundPosition;
+                        piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
+                        selectedPiece.style.backgroundPosition = tempBGPos;
+
+                        let tempId = piece.dataset.currentId;
+                        piece.dataset.currentId = selectedPiece.dataset.currentId;
+                        selectedPiece.dataset.currentId = tempId;
+
+                        selectedPiece.style.borderColor = "var(--gold)";
+                        selectedPiece = null;
+
+                        if (checkPuzzleSolved(grid)) {
+                            setTimeout(() => {
+                                alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
+                                endActiveMiniGame();
+                            }, 300);
+                        }
+                    }
+                };
+                grid.appendChild(piece);
+            });
+            container.appendChild(grid);
+        }
+
+        function checkPuzzleSolved(gridElement) {
+            const pieces = gridElement.querySelectorAll(".puzzle-piece");
+            for (let i = 0; i < pieces.length; i++) {
+                if (pieces[i].dataset.currentId !== pieces[i].dataset.targetPlaceId) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         function endActiveMiniGame() {
@@ -657,8 +981,7 @@ function buildClickableImageGame(container, config) {
             if(gameState.activeGameIndex < 4) {
                 loadGameEngine();
             } else {
-                // إتمام المرحلة بالكامل وحصد مكافأة ريش الوفاء اليومي
-                alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على  5 ريشات 🪶  ");
+                alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على 5 ريشات 🪶");
                 if(!gameState.completedDays.includes(gameState.activeDay)) {
                     gameState.completedDays.push(gameState.activeDay);
                     gameState.collectedFeathers++;
@@ -674,7 +997,7 @@ function buildClickableImageGame(container, config) {
             const canvas = document.getElementById("canvas-box");
             const status = document.getElementById("prize-status");
 
-            if(gameState.collectedFeathers >= 1) { // غير القيمة إلى 10 لربطها بالانتهاء الكلي الحقيقي
+            if(gameState.collectedFeathers >= 1) {
                 canvas.classList.add("completed");
                 status.innerText = "رائع! اكتملت لوحة لبيك يا حسين بريش المحبة والمواظبة!";
             } else {
@@ -688,152 +1011,6 @@ function buildClickableImageGame(container, config) {
             document.getElementById(screenId).classList.add('active-screen');
             window.scrollTo(0, 0);
         }
-         
-// 4. محرك لعبة البازل الديناميكي (2×2) المطور والسريع - بدون تعليق
-// 4. محرك لعبة البازل الديناميكي (2×2) المطور والنهائي المضمون 100%
-function buildPuzzleGame(container, config) {
-    const grid = document.createElement("div");
-    grid.className = "puzzle-grid";
-
-    // الأماكن الصحيحة للأجزاء الأربعة
-    const correctOrder = [
-        { id: 0, x: "0%", y: "0%" },     // أعلى يسار
-        { id: 1, x: "100%", y: "0%" },   // أعلى يمين
-        { id: 2, x: "0%", y: "100%" },   // أسفل يسار
-        { id: 3, x: "100%", y: "100%" }  // أسفل يمين
-    ];
-
-    // عمل نسخة ليتم خلطها للطفل بصرياً
-    let shuffledOrder = [...correctOrder];
-    
-    // خلط القطع مع ضمان عدم ظهورها مرتبة بالصدفة
-    do {
-        shuffledOrder.sort(() => Math.random() - 0.5);
-    } while (JSON.stringify(shuffledOrder) === JSON.stringify(correctOrder));
-
-    let selectedPiece = null;
-
-    // هنا نقوم برسم المربعات الأربعة في أماكنها الثابتة بالـ DOM
-    correctOrder.forEach((pos, index) => {
-        const piece = document.createElement("div");
-        piece.className = "puzzle-piece";
-        piece.style.backgroundImage = `url('${config.image}')`;
-        
-        // المربعات تأخذ شكلها البصري المخلط من مصفوفة الخلط
-        piece.style.backgroundPosition = `${shuffledOrder[index].x} ${shuffledOrder[index].y}`;
-        piece.dataset.currentId = shuffledOrder[index].id; // الهوية الحالية المعروضة أمام الطفل
-        
-        // هنا السر: نثبت هوية المكان الصحيح الأصلي للمربع الثابت في الشبكة
-        piece.dataset.targetPlaceId = pos.id; 
-
-        piece.onclick = function() {
-            if (!selectedPiece) {
-                selectedPiece = piece;
-                piece.style.borderColor = "#00ff00"; // تلوين الإطار المختار بالأخضر
-            } else {
-                // 1. تبديل شكل الخلفية البصرية (الـ CSS) بين القطعتين
-                let tempBGPos = piece.style.backgroundPosition;
-                piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
-                selectedPiece.style.backgroundPosition = tempBGPos;
-
-                // 2. تبديل المعرف الرقمي الحالي (currentId) الذي يتبع التغيير البصري
-                let tempId = piece.dataset.currentId;
-                piece.dataset.currentId = selectedPiece.dataset.currentId;
-                selectedPiece.dataset.currentId = tempId;
-
-                // إعادة اللون الطبيعي للإطار الذهبي
-                selectedPiece.style.borderColor = "var(--gold)";
-                selectedPiece = null;
-
-                // 3. فحص الحل فوراً
-                if (checkPuzzleSolved(grid)) {
-                    setTimeout(() => {
-                        alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
-                        endActiveMiniGame();
-                    }, 300);
-                }
-            }
-        };
-        grid.appendChild(piece);
-    });
-
-    container.appendChild(grid);
-}
-
-// دالة التحقق الرقمية النهائية والمضمونة
-function checkPuzzleSolved(gridElement) {
-    const pieces = gridElement.querySelectorAll(".puzzle-piece");
-    
-    for (let i = 0; i < pieces.length; i++) {
-        // نتحقق ببساطة: هل الهوية الحالية للقطعة البصرية (currentId) تطابق مكانها الثابت المستهدف (targetPlaceId)؟
-        if (pieces[i].dataset.currentId !== pieces[i].dataset.targetPlaceId) {
-            return false; // إذا كان هناك مربع واحد غير مطابق، اللعبة مستمرة
-        }
-    }
-    return true; } // تم الحل بنجاح 100%
-// لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
-function buildClassificationGame(container, config) {
-    let currentItemIndex = 0;
-
-    // حاوية اللعبة الأساسية
-    const mainBox = document.createElement("div");
-    mainBox.className = "classify-container";
-
-    // وسم عرض الصورة
-    const imgElement = document.createElement("img");
-    imgElement.className = "classify-img";
-    mainBox.appendChild(imgElement);
-
-    // حاوية الأزرار
-    const btnsBox = document.createElement("div");
-    btnsBox.className = "classify-btns";
-
-    const correctBtn = document.createElement("button");
-    correctBtn.className = "btn-correct";
-    correctBtn.innerText = "🟢 تصرف صحيح";
-
-    const wrongBtn = document.createElement("button");
-    wrongBtn.className = "btn-wrong";
-    wrongBtn.innerText = "🔴 تصرف خاطئ";
-
-    btnsBox.appendChild(correctBtn);
-    btnsBox.appendChild(wrongBtn);
-    mainBox.appendChild(btnsBox);
-    container.appendChild(mainBox);
-
-    // دالة لتحديث الصورة الحالية
-    function updateItem() {
-        if (currentItemIndex < config.items.length) {
-            imgElement.src = config.items[currentItemIndex].image;
-            document.getElementById("game-instruction").innerText = `صنف الصورة (${currentItemIndex + 1} من ${config.items.length})`;
-        } else {
-            // عندما ينتهي الطفل من تصنيف كل الصور في هذا اليوم
-            alert("رائع جداً! أنت تعرف التصرفات الصحيحة احسنت يا بطل الحسين! 🌟");
-            endActiveMiniGame();
-        }
-    }
-
-    // معالجة ضغط الأزرار والتحقق من الإجابة
-    function checkAnswer(chosenAnswer) {
-        let correctAnswer = config.items[currentItemIndex].isCorrect;
-        if (chosenAnswer === correctAnswer) {
-            currentItemIndex++;
-            updateItem();
-        } else {
-            alert("فكر مجدداً يا ذكي  🧐");
-        }
-    }
-
-    correctBtn.onclick = () => checkAnswer(true);
-    wrongBtn.onclick = () => checkAnswer(false);
-
-    // تشغيل اللعبة لأول صورة
-    updateItem();
-}
-
-
-        
-        
     </script>
 </body>
 </html>
