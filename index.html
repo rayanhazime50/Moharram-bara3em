@@ -689,23 +689,23 @@ function buildClickableImageGame(container, config) {
             window.scrollTo(0, 0);
         }
          
-      // 4. محرك لعبة البازل الديناميكي (2×2) للأطفال
+// 4. محرك لعبة البازل الديناميكي (2×2) المطور والسريع - بدون تعليق
 function buildPuzzleGame(container, config) {
     const grid = document.createElement("div");
     grid.className = "puzzle-grid";
 
-    // تحديد مواقع الأجزاء الأربعة الصحيحة في الصورة
+    // الأماكن الصحيحة للأجزاء الأربعة
     const correctOrder = [
-        { x: "0%", y: "0%" },     // أعلى يسار
-        { x: "100%", y: "0%" },   // أعلى يمين
-        { x: "0%", y: "100%" },   // أسفل يسار
-        { x: "100%", y: "100%" }  // أسفل يمين
+        { id: 0, x: "0%", y: "0%" },     // أعلى يسار
+        { id: 1, x: "100%", y: "0%" },   // أعلى يمين
+        { id: 2, x: "0%", y: "100%" },   // أسفل يسار
+        { id: 3, x: "100%", y: "100%" }  // أسفل يمين
     ];
 
     // عمل نسخة ليتم خلطها
     let currentOrder = [...correctOrder];
     
-    // خلط القطع حتى لا تظهر مرتبة جاهزة، مع ضمان عدم ظهورها مرتبة بالصدفة
+    // خلط القطع مع ضمان عدم ظهورها مرتبة بالصدفة
     do {
         currentOrder.sort(() => Math.random() - 0.5);
     } while (JSON.stringify(currentOrder) === JSON.stringify(correctOrder));
@@ -717,33 +717,36 @@ function buildPuzzleGame(container, config) {
         piece.className = "puzzle-piece";
         piece.style.backgroundImage = `url('${config.image}')`;
         piece.style.backgroundPosition = `${pos.x} ${pos.y}`;
-        piece.dataset.currentX = pos.x;
-        piece.dataset.currentY = pos.y;
+        
+        // هنا السر: نربط المعرف الرقمي الأصلي بالقطعة لحفظ هويتها
+        piece.dataset.correctId = pos.id; 
 
         piece.onclick = function() {
             if (!selectedPiece) {
-                // اختيار القطعة الأولى
                 selectedPiece = piece;
-                piece.style.borderColor = "#00ff00"; // تلوين الإطار بالأخضر ليعرف الطفل أنه اختارها
+                piece.style.borderColor = "#00ff00"; // تلوين الإطار المختار
             } else {
-                // اختيار القطعة الثانية وتبديل الأماكن بينهما
-                let tempX = piece.style.backgroundPositionX;
-                let tempY = piece.style.backgroundPositionY;
-                
-                piece.style.backgroundPositionX = selectedPiece.style.backgroundPositionX;
-                piece.style.backgroundPositionY = selectedPiece.style.backgroundPositionY;
-                
-                selectedPiece.style.backgroundPositionX = tempX;
-                selectedPiece.style.backgroundPositionY = tempY;
+                // تبديل شكل الخلفية (الـ CSS) بين القطعتين
+                let tempBGPos = piece.style.backgroundPosition;
+                piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
+                selectedPiece.style.backgroundPosition = tempBGPos;
+
+                // تبديل المعرف الرقمي (الـ ID) بين القطعتين ليتماشى مع التغيير البصري
+                let tempId = piece.dataset.correctId;
+                piece.dataset.correctId = selectedPiece.dataset.correctId;
+                selectedPiece.dataset.correctId = tempId;
 
                 // إعادة اللون الطبيعي للإطار
                 selectedPiece.style.borderColor = "var(--gold)";
                 selectedPiece = null;
 
-                // التحقق هل رتب الطفل البازل بشكل صحيح؟
-                if (checkPuzzleSolved(grid, correctOrder)) {
-                    alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
-                    endActiveMiniGame();
+                // فحص الحل فوراً بالاعتماد على الترتيب الرقمي للأقسام الأربعة
+                if (checkPuzzleSolved(grid)) {
+                    // نضع تايم آوت صغير جداً (50 مللي ثانية) ليرى الطفل القطعة وهي تتحرك أولاً ثم يظهر الأليرت
+                    setTimeout(() => {
+                        alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
+                        endActiveMiniGame();
+                    }, 500);
                 }
             }
         };
@@ -753,22 +756,21 @@ function buildPuzzleGame(container, config) {
     container.appendChild(grid);
 }
 
-// دالة التحقق من صحة ترتيب البازل
-function checkPuzzleSolved(gridElement, correctOrder) {
+// دالة التحقق الرقمية الجديدة السريعة جداً
+function checkPuzzleSolved(gridElement) {
     const pieces = gridElement.querySelectorAll(".puzzle-piece");
+    
+    // بما أن الـ grid يحتوي على 4 قطع مرتبة من 0 إلى 3 في الـ DOM
+    // يجب أن تطابق هوية كل قطعة (correctId) ترتيبها الفعلي (i) في المصفوفة
     for (let i = 0; i < pieces.length; i++) {
-        let currentX = pieces[i].style.backgroundPositionX;
-        let currentY = pieces[i].style.backgroundPositionY;
-        
-        // تنظيف القيم لمقارنتها بدقة (تحويل الـ لـ مئوية)
-        if (currentX !== correctOrder[i].x || currentY !== correctOrder[i].y) {
-            return false; // إذا وُجدت قطعة واحدة في مكان خاطئ
+        if (parseInt(pieces[i].dataset.correctId) !== i) {
+            return false; // لو قطعة واحدة رقمها مش بمكانه الصحيح
         }
     }
-    return true; // كل القطع في مكانها الصحيح
-}  
-
-// محرك لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
+    return true; 
+   // الترتيب 100% صحيح
+   }
+ //محرك لعبة تصنيف التصرفات (صحيح / خاطئ) ديناميكياً
 function buildClassificationGame(container, config) {
     let currentItemIndex = 0;
 
