@@ -323,8 +323,8 @@
             width: 80%;
         }
         .camp-item-icon {
-            width: 100px;
-            height: 100px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
         }
         .camp-item-text {
@@ -462,7 +462,18 @@
                         instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
                         items: [
                             { icon: "hussien.jpeg", text: "الحب والرحمة", belongsTo: "hussein" },
-                            { icon: "yazeed.jpeg", text: "الغدر والأنانية", belongsTo: "yazeed" }
+                            { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
+                            { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
+                    { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
+                    { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
+                    { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
+                    { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
+                    { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
+                    { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
+                    { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
+                    { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" }
+                    
+                            
                         ]
                     },
                     {
@@ -779,7 +790,7 @@ function buildCampSortingGame(container, config) {
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
             <div id="tent-hussein" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed var(--gold); padding:10px; width:120px;">
-                <p>خيمة الحسين</p>
+                <p>(ع)معسكرالإمام الحسين</p>
             </div>
             <div id="tent-yazeed" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed red; padding:10px; width:120px;">
                 <p>معسكر يزيد </p>
@@ -788,7 +799,7 @@ function buildCampSortingGame(container, config) {
         <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
             ${config.items.map((item, index) => `
                 <img src="${item.icon}" draggable="true" ondragstart="drag(event)" id="item-${index}" 
-                     data-camp="${item.belongsTo}" style="width:100px; height:100px; cursor:grab;">
+                     data-camp="${item.belongsTo}" style="width:60px; height:60px; cursor:grab;">
             `).join('')}
         </div>
     `;
