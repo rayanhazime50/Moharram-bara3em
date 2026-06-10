@@ -470,7 +470,7 @@
                         type: "pattern",
                         instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
                         sequence: ["boy.jpeg", "girl.jpeg"], 
-                        correctAnswers: ["boy.jpeg", "boy.jpeg", "girl.jpeg"], 
+                        correctAnswers: ["boy.jpeg", "girl.jpeg"], 
                         options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
                     }
                 ]
@@ -785,7 +785,7 @@
 
             const yazeedBtn = document.createElement("button");
             yazeedBtn.className = "btn-camp-yazeed";
-            yazeedBtn.innerText = "🔥 المعسكر الآخر";
+            yazeedBtn.innerText = "🔥 معسكر الأعداء ";
 
             btnsWrapper.appendChild(husseinBtn);
             btnsWrapper.appendChild(yazeedBtn);
@@ -797,9 +797,9 @@
                     const currentItem = config.items[currentItemIndex];
                     iconImg.src = currentItem.icon;
                     textSpan.innerText = currentItem.text;
-                    document.getElementById("game-instruction").innerText = `فرز الصفات والأيقونات (${currentItemIndex + 1} من ${config.items.length})`;
+                    document.getElementById("game-instruction").innerText = `  حدد الصفة الى أي معسكر تنتمي؟ (${currentItemIndex + 1} من ${config.items.length})`;
                 } else {
-                    alert("أحسنت يا بطل! لقد اخترت معسكر الحق والخير دائماً مع الإمام الحسين (ع)! 🌟🏴");
+                    alert("أحسنت يا بطل! أنت في معسكر الحق والخير  مع الإمام الحسين (ع)! 🌟🏴");
                     endActiveMiniGame();
                 }
             }
@@ -810,7 +810,7 @@
                     currentItemIndex++;
                     nextItem();
                 } else {
-                    alert("فكر مجدداً يا ذكي، أين تنتمي هذه الصفة الطيبة؟ 🧐");
+                    alert("فكر مجدداً يا ذكي، أين تنتمي هذه الصفة؟ 🧐");
                 }
             }
 
