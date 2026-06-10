@@ -323,8 +323,8 @@
             width: 80%;
         }
         .camp-item-icon {
-            width: 60px;
-            height: 60px;
+            width: 90px;
+            height: 90px;
             object-fit: contain;
         }
         .camp-item-text {
@@ -461,7 +461,7 @@
                         type: "camp_sorting",
                         instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
                         items: [
-                            { icon: "hussien.jpeg", text: "الحب والرحمة", belongsTo: "hussein" },
+                            { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
                             { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
                             { icon: "hussien.png", text: "الحب والرحمة", belongsTo: "hussein" },
                     { icon: "yazeed.png", text: "الغدر والأنانية", belongsTo: "yazeed" },
@@ -478,19 +478,20 @@
                     },
                     {
                         type: "classification",
-                        instruction: "انظر إلى الصورة جيداً، و صنّف الافعال التي تمثّل جيش الإمام الحسين و جيش الأعداء؟ 🤔",
+                        instruction: "يتصّف جيش الإمام الحسين(ع) بصفاتٍ حسنة، بينما جيش يزيد فيتّصفون بالشرِّ و الغضب.. صنّف الصور! 🤔",
                         items: [
-                            { image: "correct1.jpeg", isCorrect: true },
-                            { image: "wrong1.jpeg", isCorrect: false },
-                            { image: "correct2.jpeg", isCorrect: true },
-                            { image: "correct3.jpeg", isCorrect: true },
-                            { image: "wrong2.jpeg", isCorrect: false }
+                            { image: "correct21.jpeg", isCorrect: true },
+                            { image: "wrong21.jpeg", isCorrect: false },
+                            { image: "correct22.jpeg", isCorrect: true },
+                            { image: "correct23.jpeg", isCorrect: true },
+                            { image: "correct24.jpeg", isCorrect: true },
+                            { image: "wrong22.jpeg", isCorrect: false }
                         ]
                     },
                     {
                         type: "memory",
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
-                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
+                        images: ["Mem21.jpeg", "Mem22.jpeg", "Mem23.jpeg", "Mem24.jpeg"]
                     },
                     {
                         type: "pattern",
@@ -762,7 +763,7 @@
                 if (itemIndex < config.items.length) {
                     imgEl.src = config.items[itemIndex].image;
                 } else {
-                    alert("ممتاز جداً! لقد نجحت في تصنيف كافة التصرفات والسلوكيات بنجاح! 🌟👏");
+                    alert("ممتاز جداً! لقد نجحت في تصنيف كافة التصرفات  بنجاح! 🌟👏");
                     endActiveMiniGame();
                 }
             }
@@ -790,7 +791,7 @@ function buildCampSortingGame(container, config) {
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
             <div id="tent-hussein" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed var(--gold); padding:10px; width:120px;">
-                <p>(ع)معسكرالإمام الحسين</p>
+                <p>(ع)معسكر الإمام الحسين</p>
             </div>
             <div id="tent-yazeed" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed red; padding:10px; width:120px;">
                 <p>معسكر يزيد </p>
@@ -799,7 +800,7 @@ function buildCampSortingGame(container, config) {
         <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
             ${config.items.map((item, index) => `
                 <img src="${item.icon}" draggable="true" ondragstart="drag(event)" id="item-${index}" 
-                     data-camp="${item.belongsTo}" style="width:60px; height:60px; cursor:grab;">
+                     data-camp="${item.belongsTo}" style="width:90px; height:90px; cursor:grab;">
             `).join('')}
         </div>
     `;
@@ -836,7 +837,7 @@ function checkGameCompletion() {
     // إذا لم يتبق أي صور غير مصنفة في الأسفل، تنتهي اللعبة
     if (pool && pool.children.length === 0) {
         setTimeout(() => {
-            alert("ممتاز جداً! لقد نجحت في تصنيف كافة الشخصيات والصفات في المعسكر الصحيح! 🏴🕊️");
+            alert("ممتاز جداً! لقد نجحت في تصنيف كافة الشخصيات  في المعسكر الصحيح! 🏴🕊️");
             endActiveMiniGame(); // لفتح زر الانتقال للعبة التالية
         }, 400);
     }
