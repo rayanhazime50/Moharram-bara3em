@@ -790,64 +790,57 @@
 function buildCampSortingGame(container, config) {
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
-            <div id="tent-hussein" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed var(--gold); padding:10px; width:120px;">
+            <div id="tent-hussein" class="tent target-tent" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:120px;">
                 <p>(ع)معسكر الإمام الحسين</p>
             </div>
-            <div id="tent-yazeed" class="tent" ondrop="drop(event)" ondragover="allowDrop(event)" style="border:2px dashed red; padding:10px; width:120px;">
+            <div id="tent-yazeed" class="tent target-tent" style="border:2px dashed red; padding:10px; width:120px; min-height:120px;">
                 <p>معسكر يزيد </p>
             </div>
         </div>
-        <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%;">
             ${config.items.map((item, index) => `
-                <img src="${item.icon}" draggable="true" ondragstart="drag(event)" id="item-${index}" 
-                     data-camp="${item.belongsTo}" style="width:90px; height:90px; cursor:grab;">
+                <img src="${item.icon}" class="drag-item" id="item-${index}" 
+                     data-camp="${item.belongsTo}" style="width:90px; height:90px; cursor:grab; z-index: 10;">
             `).join('')}
         </div>
     `;
-}
 
-// الدوال البرمجية (يجب وضعها خارج دالة buildCampSortingGame)
-function allowDrop(ev) { ev.preventDefault(); }
-function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    // تفعيل السحب والإفلات عن طريق jQuery UI ليدعم اللمس والموبايل فوراً
+    setTimeout(() => {
+        // 1. تفعيل السحب للصور
+        $(".drag-item").draggable({
+            revert: "invalid", // إذا أُفلتت في مكان خاطئ تعود لمكانها بحركة أنيميشن سلسة
+            containment: "#main-game-area", // لمنع خروج الصور خارج صندوق اللعبة
+            cursor: "move"
+        });
 
-function drop(ev) {
-    ev.preventDefault();
-    const data = ev.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(data);
-    const targetTent = ev.target.closest('.tent');
+        // 2. تفعيل استقبال الخيام للصور
+        $(".target-tent").droppable({
+            accept: ".drag-item",
+            drop: function(event, ui) {
+                const draggedElement = ui.draggable;
+                const targetTent = this;
+                
+                const correctCamp = draggedElement.dataset.camp;
+                const targetCamp = targetTent.id === 'tent-hussein' ? 'hussein' : 'yazeed';
 
-    if (targetTent) {
-        const correctCamp = draggedElement.dataset.camp;
-        const targetCamp = targetTent.id === 'tent-hussein' ? 'hussein' : 'yazeed';
-
-        if (correctCamp === targetCamp) {
-            targetTent.appendChild(draggedElement); // الصورة تدخل الخيمة
-            checkGameCompletion(); // دالة لفحص هل انتهت كل الصور؟
-        } else {
-            alert("خطأ! حاول وضعها في الخيمة الصحيحة.");
-        }
-    }
-}
-
-
-
-
-function checkGameCompletion() {
-    const pool = document.getElementById("items-pool");
-    // إذا لم يتبق أي صور غير مصنفة في الأسفل، تنتهي اللعبة
-    if (pool && pool.children.length === 0) {
-        setTimeout(() => {
-            alert("ممتاز جداً! لقد نجحت في تصنيف كافة الشخصيات  في المعسكر الصحيح! 🏴🕊️");
-            endActiveMiniGame(); // لفتح زر الانتقال للعبة التالية
-        }, 400);
-    }
-}
-
-
-
-
-
-        // 5. لعبة إكمال وتكرار الأنماط الذكية
+                if (correctCamp === targetCamp) {
+                    // إذا الإجابة صحيحة، نثبت الصورة داخل الخيمة ونلغي سحبها
+                    $(draggedElement).css({ top: 0, left: 0, position: "relative", display: "inline-block", margin: "5px" });
+                    targetTent.appendChild(draggedElement);
+                    $(draggedElement).draggable("disable"); 
+                    
+                    checkGameCompletion(); // فحص الفوز
+                } else {
+                    // إذا الإجابة خاطئة، تعود الصورة لمكانها الأصلي تلقائياً ويعرض تنبيه
+                    alert("فكر مجدداً يا بطل، ضع الصفة في معسكرها الصحيح! 🤔");
+                    ui.draggable.animate({ top: 0, left: 0 }, "slow");
+                }
+            }
+        });
+    }, 50);
+}    
+    // 5. لعبة إكمال وتكرار الأنماط الذكية
         function buildPatternGame(container, config) {
             let currentBlankIndex = 0;
             let childAnswers = [];
@@ -1046,30 +1039,25 @@ function checkGameCompletion() {
             window.scrollTo(0, 0);
         }
         
-       function cleanupGame() {
+      function cleanupGame() {
     if (window.gameInterval) clearInterval(window.gameInterval);
     
     const area = document.getElementById("main-game-area");
     
-    // فك المستمعين لخيام لعبة الكامب قبل تدمير العناصر (تجنباً لـ Memory Leak)
-    const tents = area.querySelectorAll('.tent');
-    tents.forEach(tent => {
-        tent.removeAttribute('ondrop');
-        tent.removeAttribute('ondragover');
-    });
-    
-    const items = area.querySelectorAll('#items-pool img');
-    items.forEach(item => {
-        item.removeAttribute('ondragstart');
-    });
+    // تفكيك تفعيل jQuery UI لمنع أي تعليق في الذاكرة
+    try {
+        $(".drag-item").draggable("destroy");
+        $(".target-tent").droppable("destroy");
+    } catch(e) {
+        // في حال لم تكن اللعبة الحالية هي لعبة الكامب
+    }
 
     while (area.firstChild) {
         area.removeChild(area.firstChild);
     }
     
-    console.log("الذاكرة تم تنظيفها بنجاح");
-}
-        
+    console.log("الذاكرة تم تنظيفها بنجاح واختفت كل المستمعات السابقة");
+}       
         
         
         
