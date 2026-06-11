@@ -516,7 +516,7 @@
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
                         images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
                     },
-                    {
+                    /*{
                         type: "differences",
                         instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
                         originalImage: "DifferenceLeft.jpeg",
@@ -526,12 +526,25 @@
                             { x: 150, y: 175, size: 30 },
                             { x: 150, y: 115, size: 30 }
                         ]
-                    },
+                    },*/
                     {
                         type: "puzzle",
                         instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
                         image: "Puzz1.jpeg"
                     },
+                    
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "soldier11.jpeg", isCorrect: true }
+    ]
+},
+                    
+           
                     {
                         type: "classification",
                         instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
@@ -735,6 +748,10 @@
             else if(gameConfig.type === "shadow_matching") {
                 buildShadowMatchingGame(area, gameConfig);
             }
+            // أضيفي هذا الشرط الجديد في نهاية شروط دالة loadGameEngine الافتراضية
+else if(gameConfig.type === "soldier_quiz") {
+    buildSoldierQuizGame(area, gameConfig);
+}
             
         }
 
@@ -1261,6 +1278,62 @@ function handleShadowSelection(element, isCorrect) {
         }, 500);
     }
 }  
+
+function buildSoldierQuizGame(container, config) {
+    let itemIndex = 0;
+
+    const mainBox = document.createElement("div");
+    mainBox.className = "classify-container"; // استخدام نفس ستايل حاوية التصنيف الجاهز عندكِ
+
+    const imgEl = document.createElement("img");
+    imgEl.className = "classify-img"; // استخدام نفس ستايل الصورة الجاهز عندكِ
+
+    const btnsBox = document.createElement("div");
+    btnsBox.className = "classify-btns";
+
+    // زر نعم (باللون الأخضر الحسينى المتناسق مع مشروعكِ)
+    const yesBtn = document.createElement("button");
+    yesBtn.className = "btn-correct";
+    yesBtn.innerText = "👍 نعم";
+
+    // زر لا (باللون الأحمر المتناسق مع مشروعكِ)
+    const noBtn = document.createElement("button");
+    noBtn.className = "btn-wrong";
+    noBtn.innerText = "👎 لا";
+
+    btnsBox.appendChild(yesBtn);
+    btnsBox.appendChild(noBtn);
+    mainBox.appendChild(imgEl);
+    mainBox.appendChild(btnsBox);
+    container.appendChild(mainBox);
+
+    // دالة عرض الصورة التالية للأطفال
+    function showNextSoldier() {
+        if (itemIndex < config.items.length) {
+            imgEl.src = config.items[itemIndex].image;
+        } else {
+            alert("أحسنت يا بطل! لقد عرفت جنود الإمام الحسين(ع) الأوفياء بنجاح! 🕊️✨");
+            endActiveMiniGame(); // فتح زر التابع التالي تلقائياً لإنهاء المرحلة
+        }
+    }
+
+    // دالة التحقق من الإجابة الصحيحة والخاطئة
+    function verifySoldierChoice(userChoice) {
+        if (userChoice === config.items[itemIndex].isCorrect) {
+            itemIndex++;
+            showNextSoldier();
+        } else {
+            alert("فكر مجدداً يا ذكي، ركز في ملامح الصورة جيداً! 🧐");
+        }
+    }
+
+    // ربط الأزرار بالأحداث
+    yesBtn.onclick = () => verifySoldierChoice(true);
+    noBtn.onclick = () => verifySoldierChoice(false);
+
+    // تشغيل العرض للقطعة الأولى عند بدء اللعبة
+    showNextSoldier();
+}
         
         
         
