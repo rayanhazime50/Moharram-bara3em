@@ -785,9 +785,15 @@
 
         // 4. لعبة فرز المعسكرات (أيقونات وصور صغيرة)
         
-            
+        
+        
+        // متغير عالمي مؤقت لعد الصور الصحيحة في لعبة الكامب
+let campCorrectCount = 0;
 
 function buildCampSortingGame(container, config) {
+    // تصفير العداد عند بدء اللعبة من جديد
+    campCorrectCount = 0; 
+
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
             <div id="tent-hussein" class="tent target-tent" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:120px;">
@@ -805,16 +811,14 @@ function buildCampSortingGame(container, config) {
         </div>
     `;
 
-    // تفعيل السحب والإفلات عن طريق jQuery UI ليدعم اللمس والموبايل فوراً
+    // تفعيل السحب والإفلات عبر jQuery UI للموبايل
     setTimeout(() => {
-        // 1. تفعيل السحب للصور
         $(".drag-item").draggable({
-            revert: "invalid", // إذا أُفلتت في مكان خاطئ تعود لمكانها بحركة أنيميشن سلسة
-            containment: "#main-game-area", // لمنع خروج الصور خارج صندوق اللعبة
+            revert: "invalid",
+            containment: "#main-game-area",
             cursor: "move"
         });
 
-        // 2. تفعيل استقبال الخيام للصور
         $(".target-tent").droppable({
             accept: ".drag-item",
             drop: function(event, ui) {
@@ -825,21 +829,47 @@ function buildCampSortingGame(container, config) {
                 const targetCamp = targetTent.id === 'tent-hussein' ? 'hussein' : 'yazeed';
 
                 if (correctCamp === targetCamp) {
-                    // إذا الإجابة صحيحة، نثبت الصورة داخل الخيمة ونلغي سحبها
+                    // تثبيت الصورة داخل الخيمة برمجياً وبصرياً
                     $(draggedElement).css({ top: 0, left: 0, position: "relative", display: "inline-block", margin: "5px" });
                     targetTent.appendChild(draggedElement);
                     $(draggedElement).draggable("disable"); 
                     
-                    checkGameCompletion(); // فحص الفوز
+                    // زيادة العداد لأن الإجابة صحيحة
+                    campCorrectCount++;
+                    
+                    // تمرير إجمالي عدد الصور المطلوب تصنيفها للدالة (في حالتك 10 صور)
+                    checkCampGameCompletion(config.items.length); 
                 } else {
-                    // إذا الإجابة خاطئة، تعود الصورة لمكانها الأصلي تلقائياً ويعرض تنبيه
+                    // إذا أخطأ تعود الصورة لمكانها
                     alert("فكر مجدداً يا بطل، ضع الصفة في معسكرها الصحيح! 🤔");
                     ui.draggable.animate({ top: 0, left: 0 }, "slow");
                 }
             }
         });
     }, 50);
-}    
+}
+        
+        function checkCampGameCompletion(totalItems) {
+    // إذا تساوى عدد الإجابات الصحيحة مع عدد الصور الإجمالي في المصفوفة
+    if (campCorrectCount === totalItems) {
+        setTimeout(() => {
+            alert("ممتاز جداً! لقد نجحت في تصنيف كافة الشخصيات  في المعسكر الصحيح! 🏴🕊️");
+            endActiveMiniGame(); // هذا السطر سيقوم بإظهار زر الـ "تابع اللعبة التالية" فوراً
+        }, 400);
+    }
+}
+        
+        
+        
+            
+            
+            
+            
+            
+            
+            
+            
+            
     // 5. لعبة إكمال وتكرار الأنماط الذكية
         function buildPatternGame(container, config) {
             let currentBlankIndex = 0;
