@@ -755,6 +755,22 @@
 
         function initGameSequence() {
             gameState.activeGameIndex = 0;
+            const currentDayData = gameDatabase[gameState.activeDay];
+            
+            if (activeBgMusic) {
+                activeBgMusic.pause();
+                activeBgMusic = null;
+            }
+
+            // التأكد من أن اليوم الحالي يحتوي على ملف موسيقى مخصص له
+            if (currentDayData && currentDayData.bgMusic) {
+                activeBgMusic = new Audio(currentDayData.bgMusic);
+                activeBgMusic.loop = true; // تجعل الموسيقى تعيد نفسها تلقائياً
+                activeBgMusic.volume = 0.5; // خفض الصوت لـ 30% لكي لا يغطي على أصوات كبسات اللعبة
+                activeBgMusic.play().catch(e => console.log("المتصفح يمنع التشغيل التلقائي قبل التفاعل:", e));
+            }
+            
+            
             loadGameEngine();
             showScreen("scr-game");
         }
@@ -1197,6 +1213,11 @@ function buildCampSortingGame(container, config) {
                 loadGameEngine();
             } else {
                 alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على 5 ريشات 🪶");
+                // 🎵 إيقاف الموسيقى الخلفية فوراً لأن اليوم انتهى وعاد الطفل للخريطة
+                if (activeBgMusic) {
+                    activeBgMusic.pause();
+                    activeBgMusic = null;
+                }
                 if(!gameState.completedDays.includes(gameState.activeDay)) {
                     gameState.completedDays.push(gameState.activeDay);
                     gameState.collectedFeathers++;
@@ -1226,7 +1247,10 @@ function buildCampSortingGame(container, config) {
         cleanupGame(); // <--- تنظيف الذاكرة عند الخروج للخريطة
     }
             
-            
+         if (activeBgMusic) {
+                    activeBgMusic.pause();
+                    activeBgMusic = null;
+                }   
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
             window.scrollTo(0, 0);
@@ -1458,44 +1482,9 @@ function buildSoldierQuizGame(container, config) {
 
     updateEnemyDisplay();
 } 
-        
-       function showGameView() {
-            document.getElementById("story-view").style.display = "none";
-            document.getElementById("game-view").style.display = "flex";
-            
-            // 🎵 كود تشغيل موسيقى المرحلة الديناميكية:
-            const currentDayData = gameDatabase[gameState.activeDay];
-            
-            // إذا كانت هناك موسيقى تعمل سابقاً، نقوم بإيقافها فوراً
-            if (activeBgMusic) {
-                activeBgMusic.pause();
-                activeBgMusic = null;
-            }
 
-            // التأكد من أن اليوم الحالي يحتوي على ملف موسيقى مخصص له
-            if (currentDayData && currentDayData.bgMusic) {
-                activeBgMusic = new Audio(currentDayData.bgMusic);
-                activeBgMusic.loop = true; // تجعل الموسيقى تعيد نفسها تلقائياً
-                activeBgMusic.volume = 0.5; // خفض الصوت لـ 30% لكي لا يغطي على أصوات كبسات اللعبة
-                activeBgMusic.play().catch(e => console.log("المتصفح يمنع التشغيل التلقائي قبل التفاعل"));
-            }
-
-            loadGameEngine();
-        } 
         
-        
-        function showMapView() {
-            // 🎵 إيقاف موسيقى الألعاب فوراً عند العودة للخريطة
-            if (activeBgMusic) {
-                activeBgMusic.pause();
-                activeBgMusic = null;
-            }
 
-            document.getElementById("day-detail-view").style.display = "none";
-            document.getElementById("game-view").style.display = "none";
-            document.getElementById("map-view").style.display = "block";
-            renderMap();
-        }
         
         
         
