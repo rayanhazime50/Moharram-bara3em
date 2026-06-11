@@ -510,6 +510,7 @@
             1: {
                 title: "اليوم الأول: مظاهر إحياء عاشوراء .",
                 audio: "day1.mp3",
+                bgMusic:"bgday1.mp3",
                 games: [
                     {
                         type: "memory",
@@ -595,6 +596,7 @@
             2: {
                 title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
                 audio: "day2.m4a",
+                bgMusic:"bgday2.mp3",
                 games: [
                     /*{
                         type: "camp_sorting",
@@ -663,6 +665,8 @@
             tempGameScore: 0
         };
         let currentPuzzleState = [];
+        // متغير عالمي للموسيقى الخلفية للألعاب
+        let activeBgMusic = null;
 
         window.onload = function() {
             // loadSavedProgress(); // معطل للتجربة من الصفر دائماً عند التحديث
@@ -1455,8 +1459,43 @@ function buildSoldierQuizGame(container, config) {
     updateEnemyDisplay();
 } 
         
+       function showGameView() {
+            document.getElementById("story-view").style.display = "none";
+            document.getElementById("game-view").style.display = "flex";
+            
+            // 🎵 كود تشغيل موسيقى المرحلة الديناميكية:
+            const currentDayData = gameDatabase[gameState.activeDay];
+            
+            // إذا كانت هناك موسيقى تعمل سابقاً، نقوم بإيقافها فوراً
+            if (activeBgMusic) {
+                activeBgMusic.pause();
+                activeBgMusic = null;
+            }
+
+            // التأكد من أن اليوم الحالي يحتوي على ملف موسيقى مخصص له
+            if (currentDayData && currentDayData.bgMusic) {
+                activeBgMusic = new Audio(currentDayData.bgMusic);
+                activeBgMusic.loop = true; // تجعل الموسيقى تعيد نفسها تلقائياً
+                activeBgMusic.volume = 0.5; // خفض الصوت لـ 30% لكي لا يغطي على أصوات كبسات اللعبة
+                activeBgMusic.play().catch(e => console.log("المتصفح يمنع التشغيل التلقائي قبل التفاعل"));
+            }
+
+            loadGameEngine();
+        } 
         
         
+        function showMapView() {
+            // 🎵 إيقاف موسيقى الألعاب فوراً عند العودة للخريطة
+            if (activeBgMusic) {
+                activeBgMusic.pause();
+                activeBgMusic = null;
+            }
+
+            document.getElementById("day-detail-view").style.display = "none";
+            document.getElementById("game-view").style.display = "none";
+            document.getElementById("map-view").style.display = "block";
+            renderMap();
+        }
         
         
         
