@@ -516,6 +516,24 @@
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
                         images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
                     },
+                    
+                    
+                 {
+                        type: "classification",
+                        instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
+                        items: [
+                            { image: "correct1.jpeg", isCorrect: true },
+                            { image: "wrong1.jpeg", isCorrect: false },
+                            { image: "correct2.jpeg", isCorrect: true },
+                            { image: "correct3.jpeg", isCorrect: true },
+                            { image: "wrong2.jpeg", isCorrect: false }
+                        ]
+                    }   
+                    
+                    
+                    
+                    
+                    
                     /*{
                         type: "differences",
                         instruction: "قارن بين الصورتين وجد الـ 3 فروقات المخبأة في الصورة اليسرى! 🔍",
@@ -527,11 +545,11 @@
                             { x: 150, y: 115, size: 30 }
                         ]
                     },*/
-                    {
+                    /*{
                         type: "puzzle",
                         instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
                         image: "Puzz1.jpeg"
-                    },
+                    },*/
                     
                     {
     type: "soldier_quiz",
@@ -543,20 +561,36 @@
         { image: "soldier11.jpeg", isCorrect: true }
     ]
 },
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+}
+
+
+
+
+
+
+
+
                     
            
-                    {
-                        type: "classification",
-                        instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
-                        items: [
-                            { image: "correct1.jpeg", isCorrect: true },
-                            { image: "wrong1.jpeg", isCorrect: false },
-                            { image: "correct2.jpeg", isCorrect: true },
-                            { image: "correct3.jpeg", isCorrect: true },
-                            { image: "wrong2.jpeg", isCorrect: false }
-                        ]
-                    }
-                ]
+                                   ]
             },
             2: {
                 title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
@@ -751,6 +785,10 @@
             // أضيفي هذا الشرط الجديد في نهاية شروط دالة loadGameEngine الافتراضية
 else if(gameConfig.type === "soldier_quiz") {
     buildSoldierQuizGame(area, gameConfig);
+}
+// أضيفي هذا الشرط في نهاية شروط دالة loadGameEngine الافتراضية
+else if(gameConfig.type === "enemy_clicker") {
+    buildEnemyClickerGame(area, gameConfig);
 }
             
         }
@@ -1335,6 +1373,88 @@ function buildSoldierQuizGame(container, config) {
     showNextSoldier();
 }
         
+        
+       function buildEnemyClickerGame(container, config) {
+    let currentEnemyIndex = 0;
+    let clicksLeft = config.enemies[currentEnemyIndex].requiredClicks;
+    let isTransitioning = false; // متغير لمنع الكبس أثناء عرض صورة الهزيمة
+
+    const hitSound = new Audio(config.audioEffect || "assets/sounds/hit.mp3");
+
+    const clickerContainer = document.createElement("div");
+    clickerContainer.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; animation: fadeIn 0.4s ease;";
+
+    const counterText = document.createElement("p");
+    counterText.style.cssText = "font-size: 18px; font-weight: bold; color: var(--accent-red); margin: 0;";
+    
+    const enemyImg = document.createElement("img");
+    enemyImg.style.cssText = "width: 160px; height: 160px; object-fit: contain; border-radius: 15px; border: 3px solid var(--accent-red); box-shadow: 0 8px 20px rgba(158, 42, 43, 0.3); cursor: pointer; transition: all 0.1s ease-in-out; -webkit-tap-highlight-color: transparent;";
+
+    clickerContainer.appendChild(counterText);
+    clickerContainer.appendChild(enemyImg);
+    container.appendChild(clickerContainer);
+
+    function updateEnemyDisplay() {
+        if (currentEnemyIndex < config.enemies.length) {
+            // إعادة تعيين الحالة للعدو الجديد
+            isTransitioning = false;
+            enemyImg.style.borderColor = "var(--accent-red)";
+            enemyImg.src = config.enemies[currentEnemyIndex].image;
+            clicksLeft = config.enemies[currentEnemyIndex].requiredClicks;
+            counterText.innerText = `الضربات المتبقية لهزيمة العدو: ${clicksLeft} 💥`;
+        } else {
+            // عند القضاء على جميع الأعداء
+            counterText.innerText = "تم طرد الأعداء بنجاح! 🎉";
+            enemyImg.style.display = "none";
+            setTimeout(() => {
+                alert("أحسنت يا بطل الأبطال! لقد دافعت عن المعسكر وطردت الأعداء بشجاعتك! 🏴⚔️");
+                endActiveMiniGame();
+            }, 400);
+        }
+    }
+
+    enemyImg.onclick = function() {
+        // إذا كان الكود يعرض صورة الهزيمة حالياً، نمنع الضغط تماماً
+        if (isTransitioning) return;
+
+        hitSound.currentTime = 0;
+        hitSound.play().catch(e => console.log("الصوت يحتاج تفاعل أولى"));
+
+        // تأثير اهتزاز الضرب
+        enemyImg.style.transform = "scale(0.92) rotate(4deg)";
+        setTimeout(() => { enemyImg.style.transform = "scale(1) rotate(0deg)"; }, 50);
+
+        clicksLeft--;
+        counterText.innerText = `الضربات المتبقية لهزيمة العدو: ${clicksLeft} 💥`;
+
+        // 💥 اللوجيك السحري هنا عند انتهاء الكبسات:
+        if (clicksLeft <= 0) {
+            isTransitioning = true; // قفل الكبس مؤقتاً
+            counterText.innerText = "تم القضاء عليه! ⚔️🔥";
+            
+            // 1. تبديل الصورة فوراً لتظهر صورة العدو المهزوم
+            enemyImg.src = config.enemies[currentEnemyIndex].defeatedImage;
+            enemyImg.style.borderColor = "gray"; // تغيير لون الإطار ليشعر الطفل بالهزيمة
+            enemyImg.style.transform = "scale(0.9) rotate(-5deg)"; // تأثير مائل بسيط للوفاة
+
+            // 2. الانتظار لمدة ثانية واحدة (1000ms) ليستوعب الطفل النصر، ثم ننتقل للعدو الجديد
+            setTimeout(() => {
+                currentEnemyIndex++;
+                
+                // أنيميشن اختفاء وظهور ناعم للعدو القادم
+                enemyImg.style.opacity = "0";
+                setTimeout(() => {
+                    updateEnemyDisplay();
+                    enemyImg.style.opacity = "1";
+                    enemyImg.style.transform = "scale(1) rotate(0deg)";
+                }, 200);
+
+            }, 1200); // يمكنك زيادة أو إنقاص هذا الوقت حسب رغبتكِ
+        }
+    };
+
+    updateEnemyDisplay();
+} 
         
         
         
