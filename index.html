@@ -422,7 +422,7 @@
     height: 90px;
     object-fit: contain;
     /* فلتر السحر البرمجي لتحويل أي صورة لظل أسود داكن بالكامل */
-    filter: brightness(0); 
+
     pointer-events: none; /* لمنع تداخل السحب مع الضغط */
     transition: filter 0.3s ease;
 }
@@ -1195,7 +1195,7 @@ function buildCampSortingGame(container, config) {
                         <div class="shadow-option-card" 
                              onclick="handleShadowSelection(this, ${isCorrect})"
                              style="background: var(--card-color); padding: 10px; border-radius: 12px; border: 2px solid #444; cursor: pointer; transition: all 0.2s;">
-                            <img src="${shadowUrl}" style="width: 90px; height: 90px; object-fit: contain; filter: brightness(0); /* لجعل الصورة سوداء تماماً كظل إذا لم تكن سوداء بالأصل */">
+                            <img src="${shadowUrl}" style="width: 90px; height: 90px; object-fit: contain /* لجعل الصورة سوداء تماماً كظل إذا لم تكن سوداء بالأصل */">
                         </div>
                     `;
                 }).join('')}
