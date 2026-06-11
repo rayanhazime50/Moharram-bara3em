@@ -615,6 +615,7 @@
             activeGameIndex: 0,
             tempGameScore: 0
         };
+        let currentPuzzleState = [];
 
         window.onload = function() {
             // loadSavedProgress(); // معطل للتجربة من الصفر دائماً عند التحديث
@@ -1032,10 +1033,12 @@ function buildCampSortingGame(container, config) {
         }
 
         // 6. لعبة البازل (2×2) النهائية السريعة المضمونة
+        
         function buildPuzzleGame(container, config) {
             const grid = document.createElement("div");
             grid.className = "puzzle-grid";
 
+            // الترتيب الصحيح الفعلي للقطع الإيجابية (4 قطع)
             const correctOrder = [
                 { id: 0, x: "0%", y: "0%" },
                 { id: 1, x: "100%", y: "0%" },
@@ -1043,11 +1046,14 @@ function buildCampSortingGame(container, config) {
                 { id: 3, x: "100%", y: "100%" }
             ];
 
+            // نأخذ نسخة ونخلطها عشوائياً بشكل آمن يضمن عدم تكرار الترتيب الأصلي
             let shuffledOrder = [...correctOrder];
-            
             do {
                 shuffledOrder.sort(() => Math.random() - 0.5);
             } while (JSON.stringify(shuffledOrder) === JSON.stringify(correctOrder));
+
+            // حفظ الترتيب العشوائي الحالي داخل المصفوفة الرقمية للمراقبة
+            currentPuzzleState = shuffledOrder.map(item => item.id);
 
             let selectedPiece = null;
 
@@ -1056,27 +1062,40 @@ function buildCampSortingGame(container, config) {
                 piece.className = "puzzle-piece";
                 piece.style.backgroundImage = `url('${config.image}')`;
                 
+                // عرض مظهر القطعة المخلومة بصرياً بناءً على الترتيب العشوائي
                 piece.style.backgroundPosition = `${shuffledOrder[index].x} ${shuffledOrder[index].y}`;
-                piece.dataset.currentId = shuffledOrder[index].id;
-                piece.dataset.targetPlaceId = pos.id;
+                
+                // ربط المربع بمعرّف الخانة الثابت (من 0 إلى 3)
+                piece.dataset.slotIndex = index; 
 
                 piece.onclick = function() {
                     if (!selectedPiece) {
                         selectedPiece = piece;
                         piece.style.borderColor = "#00ff00";
                     } else {
-                        let tempBGPos = piece.style.backgroundPosition;
-                        piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
-                        selectedPiece.style.backgroundPosition = tempBGPos;
+                        const firstSlot = parseInt(selectedPiece.dataset.slotIndex);
+                        const secondSlot = parseInt(piece.dataset.slotIndex);
 
-                        let tempId = piece.dataset.currentId;
-                        piece.dataset.currentId = selectedPiece.dataset.currentId;
-                        selectedPiece.dataset.currentId = tempId;
+                        if (firstSlot !== secondSlot) {
+                            // 1. التبَديل البصري للخلفيات بين الخانتين
+                            let tempBGPos = piece.style.backgroundPosition;
+                            piece.style.backgroundPosition = selectedPiece.style.backgroundPosition;
+                            selectedPiece.style.backgroundPosition = tempBGPos;
+
+                            // 2. التبَديل الرقمي الصافي داخل مصفوفة المراقبة في الذاكرة
+                            let tempId = currentPuzzleState[firstSlot];
+                            currentPuzzleState[firstSlot] = currentPuzzleState[secondSlot];
+                            currentPuzzleState[secondSlot] = tempId;
+                        }
 
                         selectedPiece.style.borderColor = "var(--gold)";
                         selectedPiece = null;
 
-                        if (checkPuzzleSolved(grid)) {
+                        // استدعاء دالة الفحص الذكية بعد كل تبديل
+                        if (checkPuzzleSolved()) {
+                            // قفل الضغط عن القطع فور الفوز لمنع أي نقرات غريبة
+                            grid.querySelectorAll(".puzzle-piece").forEach(el => el.style.pointerEvents = 'none');
+                            
                             setTimeout(() => {
                                 alert("يا لك من ذكي! لقد ركّبت لوحة البازل بالشكل الصحيح! 🧩👏");
                                 endActiveMiniGame();
@@ -1088,16 +1107,24 @@ function buildCampSortingGame(container, config) {
             });
             container.appendChild(grid);
         }
-
-        function checkPuzzleSolved(gridElement) {
-            const pieces = gridElement.querySelectorAll(".puzzle-piece");
-            for (let i = 0; i < pieces.length; i++) {
-                if (pieces[i].dataset.currentId !== pieces[i].dataset.targetPlaceId) {
-                    return false;
+        
+        
+        
+        function checkPuzzleSolved() {
+            // الفحص يعتمد الآن بالكامل على مطابقة الأرقام في الذاكرة (0, 1, 2, 3) 
+            // ولن يتأثر بنوع الهاتف أو المتصفح أو حجم الشاشة
+            for (let i = 0; i < currentPuzzleState.length; i++) {
+                if (currentPuzzleState[i] !== i) {
+                    return false; // إذا وجد قطعة واحدة في غير مكانها الرقمي يعود بـ false
                 }
             }
-            return true;
+            return true; // اللعبة حُلت بنجاح بنسبة 100%
         }
+        
+        
+        
+        
+       
 
         function endActiveMiniGame() {
             document.getElementById("btn-next-game").style.display = "block";
