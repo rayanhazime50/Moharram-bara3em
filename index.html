@@ -349,6 +349,98 @@
 }   
         
         
+        /* ==========================================================================
+   ستايل لعبة مطابقة الظل (Shadow Matching Game)
+   ========================================================================== */
+
+/* الحاوية الرئيسية للعبة */
+.shadow-game-container {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* صندوق الصورة الملونة العلوية */
+.main-image-holder {
+    background: var(--card-color) !important; /* استخدام لون الكارد الافتراضي */
+    border: 2px solid var(--gold);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.main-image-holder:hover {
+    transform: scale(1.03); /* حركة بسيطة ملفتة للنظر */
+}
+
+/* حاوية خيارات الظلال في الأسفل */
+.shadow-options-holder {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* بطاقة الظل المفردة */
+.shadow-option-card {
+    background: var(--card-color);
+    padding: 12px;
+    border-radius: 15px;
+    border: 2px solid #333;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* منع التحديد الأزرق الافتراضي على الموبايل عند الضغط المتكرر */
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* تأثير حركي عند حوم الماوس (للكمبيوتر) */
+@media (hover: hover) {
+    .shadow-option-card:hover {
+        transform: translateY(-5px); /* ترتفع للأعلى قليلاً */
+        border-color: var(--gold);
+        box-shadow: 0 8px 16px rgba(223, 183, 67, 0.15);
+    }
+}
+
+/* تأثير فوري عند الضغط بأصبع الطفل (للموبايل والكمبيوتر) */
+.shadow-option-card:active {
+    transform: scale(0.95); /* تتقلص قليلاً لتعطي شعور الزر الحقيقي */
+}
+
+/* ستايل صورة الظل بالداخل */
+.shadow-option-card img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    /* فلتر السحر البرمجي لتحويل أي صورة لظل أسود داكن بالكامل */
+    filter: brightness(0); 
+    pointer-events: none; /* لمنع تداخل السحب مع الضغط */
+    transition: filter 0.3s ease;
+}
+
+/* أنيميشن الدخول السلس عند بدء اللعبة */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+        
+        
+        
         
         
     </style>
@@ -457,7 +549,7 @@
                 title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
                 audio: "day2.m4a",
                 games: [
-                    {
+                    /*{
                         type: "camp_sorting",
                         instruction: "افصل جيش الإمام الحسين(ع) عن جيش الأعداء🕊️🏴",
                         items: [
@@ -475,7 +567,7 @@
                     
                             
                         ]
-                    },
+                    },*/
                     {
                         type: "classification",
                         instruction: "يتصّف جيش الإمام الحسين(ع) بصفاتٍ حسنة، بينما جيش يزيد فيتّصفون بالشرِّ و الغضب.. صنّف الصور! 🤔",
@@ -488,6 +580,17 @@
                             { image: "wrong22.jpeg", isCorrect: false }
                         ]
                     },
+                    {
+            type: "shadow_matching",
+            instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
+            mainImage: "shadow1.jpeg",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow1.jpeg", // الظل الصحيح المطابق لها
+            wrongShadows: [
+                "wshadow1.jpeg",          // ظل خاطئ أول
+                "wshadow11.jpeg"           // ظل خاطئ ثاني
+            ]
+        },
+                    
                     {
                         type: "memory",
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
@@ -628,6 +731,10 @@
             } else if(gameConfig.type === "pattern") {
                 buildPatternGame(area, gameConfig);
             }
+            else if(gameConfig.type === "shadow_matching") {
+                buildShadowMatchingGame(area, gameConfig);
+            }
+            
         }
 
         // 1. لعبة الذاكرة
@@ -785,104 +892,61 @@
 
         // 4. لعبة فرز المعسكرات (أيقونات وصور صغيرة)
         
-        
-        
-        // متغير عالمي مؤقت لعد الصور الصحيحة في لعبة الكامب
-let campCorrectCount = 0;
+            
 
 function buildCampSortingGame(container, config) {
-    campCorrectCount = 0; 
-
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
-            <div id="tent-hussein" class="tent target-tent" data-camp-type="hussein" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:150px;">
+            <div id="tent-hussein" class="tent target-tent" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:120px;">
                 <p>(ع)معسكر الإمام الحسين</p>
             </div>
-            <div id="tent-yazeed" class="tent target-tent" data-camp-type="yazeed" style="border:2px dashed red; padding:10px; width:120px; min-height:150px;">
+            <div id="tent-yazeed" class="tent target-tent" style="border:2px dashed red; padding:10px; width:120px; min-height:120px;">
                 <p>معسكر يزيد </p>
             </div>
         </div>
-        <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%; min-height:110px;">
+        <div id="items-pool" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%;">
             ${config.items.map((item, index) => `
                 <img src="${item.icon}" class="drag-item" id="item-${index}" 
-                     data-camp="${item.belongsTo}" style="width:90px; height:90px; cursor:grab; z-index: 10; margin: 5px;">
+                     data-camp="${item.belongsTo}" style="width:90px; height:90px; cursor:grab; z-index: 10;">
             `).join('')}
         </div>
     `;
 
+    // تفعيل السحب والإفلات عن طريق jQuery UI ليدعم اللمس والموبايل فوراً
     setTimeout(() => {
-        // 1. تفعيل السحب للصور مع خاصية العودة الذكية عند عدم قبولها
+        // 1. تفعيل السحب للصور
         $(".drag-item").draggable({
-            revert: "invalid", // تعود لمكانها إذا لم يتم إسقاطها في عنصر droppable متوافق
-            containment: "#main-game-area",
-            cursor: "move",
-            start: function() {
-                $(this).css("z-index", 100);
-            }
+            revert: "invalid", // إذا أُفلتت في مكان خاطئ تعود لمكانها بحركة أنيميشن سلسة
+            containment: "#main-game-area", // لمنع خروج الصور خارج صندوق اللعبة
+            cursor: "move"
         });
 
-        // 2. تفعيل استقبال الخيام لجميع الصور، والفحص يتم بدقة بالداخل
+        // 2. تفعيل استقبال الخيام للصور
         $(".target-tent").droppable({
-            accept: ".drag-item", // تستقبل أي صورة أولاً للحفاظ على مرونة الحركة
+            accept: ".drag-item",
             drop: function(event, ui) {
                 const draggedElement = ui.draggable;
                 const targetTent = this;
-
-                // قراءة المعسكرات باستخدام JavaScript الأصلي لضمان دقة القيمة 100%
-                const correctCamp = draggedElement.getAttribute("data-camp");
-                const targetCamp = targetTent.getAttribute("data-camp-type");
+                
+                const correctCamp = draggedElement.dataset.camp;
+                const targetCamp = targetTent.id === 'tent-hussein' ? 'hussein' : 'yazeed';
 
                 if (correctCamp === targetCamp) {
-                    // --- الحالة الأولى: الإجابة صحيحة ---
-                    ui.draggable.css({
-                        top: 0,
-                        left: 0,
-                        position: "relative",
-                        display: "inline-block",
-                        margin: "5px"
-                    });
+                    // إذا الإجابة صحيحة، نثبت الصورة داخل الخيمة ونلغي سحبها
+                    $(draggedElement).css({ top: 0, left: 0, position: "relative", display: "inline-block", margin: "5px" });
+                    targetTent.appendChild(draggedElement);
+                    $(draggedElement).draggable("disable"); 
                     
-                    targetTent.appendChild(draggedElement); // نقل الصورة داخل الخيمة في الـ HTML
-                    ui.draggable.draggable("disable"); // قفل السحب تماماً عن هذه الصورة
-                    ui.draggable.css("cursor", "default");
-                    
-                    campCorrectCount++;
-                    checkCampGameCompletion(config.items.length); // فحص الفوز
+                    checkGameCompletion(); // فحص الفوز
                 } else {
-                    // --- الحالة الثانية: الإجابة خاطئة ---
-                    alert("فكر مجدداً يا بطل، هذه الصفة لا تنتمي لهذا المعسكر! 🤔");
-                    
-                    // إجبار الصورة على الطيران والعودة لمكانها الأصلي في الحوض السفلي فوراً
-                    ui.draggable.animate({
-                        top: 0,
-                        left: 0
-                    }, 400);
+                    // إذا الإجابة خاطئة، تعود الصورة لمكانها الأصلي تلقائياً ويعرض تنبيه
+                    alert("فكر مجدداً يا بطل، ضع الصفة في معسكرها الصحيح! 🤔");
+                    ui.draggable.animate({ top: 0, left: 0 }, "slow");
                 }
             }
         });
     }, 50);
-}        
-        function checkCampGameCompletion(totalItems) {
-    // إذا تساوى عدد الإجابات الصحيحة مع عدد الصور الإجمالي في المصفوفة
-    if (campCorrectCount === totalItems) {
-        setTimeout(() => {
-            alert("ممتاز جداً! لقد نجحت في تصنيف كافة الشخصيات  في المعسكر الصحيح! 🏴🕊️");
-            endActiveMiniGame(); // هذا السطر سيقوم بإظهار زر الـ "تابع اللعبة التالية" فوراً
-        }, 400);
-    }
-}
-        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-            
-            
+}    
     // 5. لعبة إكمال وتكرار الأنماط الذكية
         function buildPatternGame(container, config) {
             let currentBlankIndex = 0;
@@ -1101,6 +1165,79 @@ function buildCampSortingGame(container, config) {
     
     console.log("الذاكرة تم تنظيفها بنجاح واختفت كل المستمعات السابقة");
 }       
+        
+        
+      function buildShadowMatchingGame(container, config) {
+    // config يجب أن يحتوي على:
+    // config.mainImage -> رابط الصورة الأصلية الملونة
+    // config.correctShadow -> رابط صورة الظل الصحيح
+    // config.wrongShadows -> مصفوفة تحتوي على روابط الظلال الخاطئة (مثلاً 2 أو 3 ظلال)
+
+    // دمج الظل الصحيح مع الظلال الخاطئة ثم ترتيبها عشوائياً (Shuffle) لكي لا يكون الحل في نفس المكان دائماً
+    const allOptions = [...config.wrongShadows, config.correctShadow];
+    allOptions.sort(() => Math.random() - 0.5);
+
+    container.innerHTML = `
+        <div class="shadow-game-container" style="display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%;">
+            
+            <p style="font-size: 18px; font-weight: bold; color: var(--gold);">ابحث عن الظل الصحيح المطابق للصورة! 🔍</p>
+            
+            <div class="main-image-holder" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 2px solid var(--gold);">
+                <img src="${config.mainImage}" style="width: 130px; height: 130px; object-fit: contain;">
+            </div>
+
+            <div class="shadow-options-holder" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; width: 100%; margin-top: 10px;">
+                ${allOptions.map((shadowUrl, index) => {
+                    // تحديد ما إذا كان هذا الخيار هو الظل الصحيح أم لا
+                    const isCorrect = (shadowUrl === config.correctShadow);
+                    
+                    return `
+                        <div class="shadow-option-card" 
+                             onclick="handleShadowSelection(this, ${isCorrect})"
+                             style="background: var(--card-color); padding: 10px; border-radius: 12px; border: 2px solid #444; cursor: pointer; transition: all 0.2s;">
+                            <img src="${shadowUrl}" style="width: 90px; height: 90px; object-fit: contain; filter: brightness(0); /* لجعل الصورة سوداء تماماً كظل إذا لم تكن سوداء بالأصل */">
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+
+        </div>
+    `;
+}
+
+// دالة معالجة الضغط على الظل
+function handleShadowSelection(element, isCorrect) {
+    // منع الضغط المتكرر بعد الإجابة
+    const allCards = document.querySelectorAll('.shadow-option-card');
+    allCards.forEach(card => card.style.pointerEvents = 'none');
+
+    if (isCorrect) {
+        // تأثير بصري عند الإجابة الصحيحة
+        element.style.borderColor = "var(--ashura-green)";
+        element.style.background = "rgba(21, 66, 51, 0.3)";
+        
+        setTimeout(() => {
+            alert("رائع جداً! إجابة صحيحة وظل مطابق تماماً! 🎉 العصفورة فخورة بك.");
+            endActiveMiniGame(); // استدعاء دالة إنهاء اللعبة لفتح زر التابع التالي
+        }, 500);
+    } else {
+        // تأثير بصري عند الإجابة الخاطئة
+        element.style.borderColor = "var(--accent-red)";
+        element.style.background = "rgba(158, 42, 43, 0.2)";
+        
+        setTimeout(() => {
+            alert("هذا ليس الظل الصحيح، حاول التركيز في التفاصيل مرة أخرى! 🤔");
+            // إعادة تفعيل الضغط ليعيد المحاولة
+            allCards.forEach(card => card.style.pointerEvents = 'auto');
+            element.style.borderColor = "#444";
+            element.style.background = "var(--card-color)";
+        }, 500);
+    }
+}  
+        
+        
+        
+        
         
         
         
