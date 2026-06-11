@@ -555,10 +555,10 @@
     type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
     items: [
-        { image: "soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
         { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
         { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "soldier11.jpeg", isCorrect: true }
+        { image: "Soldier11.jpeg", isCorrect: true }
     ]
 },
 
@@ -1388,8 +1388,7 @@ function buildSoldierQuizGame(container, config) {
     counterText.style.cssText = "font-size: 18px; font-weight: bold; color: var(--accent-red); margin: 0;";
     
     const enemyImg = document.createElement("img");
-    enemyImg.style.cssText = "width: 160px; height: 160px; object-fit: contain; border-radius: 15px; border: 3px solid var(--accent-red); box-shadow: 0 8px 20px rgba(158, 42, 43, 0.3); cursor: pointer; transition: all 0.1s ease-in-out; -webkit-tap-highlight-color: transparent;";
-
+    enemyImg.style.cssText = "max-width: 180px; max-height: 180px; width: auto; height: auto; cursor: pointer; transition: all 0.1s ease-in-out; -webkit-tap-highlight-color: transparent;";
     clickerContainer.appendChild(counterText);
     clickerContainer.appendChild(enemyImg);
     container.appendChild(clickerContainer);
@@ -1401,13 +1400,13 @@ function buildSoldierQuizGame(container, config) {
             enemyImg.style.borderColor = "var(--accent-red)";
             enemyImg.src = config.enemies[currentEnemyIndex].image;
             clicksLeft = config.enemies[currentEnemyIndex].requiredClicks;
-            counterText.innerText = `الضربات المتبقية لهزيمة العدو: ${clicksLeft} 💥`;
+            counterText.innerText = `الضربات المتبقية للقضاءعلى العدو: ${clicksLeft} 💥`;
         } else {
             // عند القضاء على جميع الأعداء
-            counterText.innerText = "تم طرد الأعداء بنجاح! 🎉";
+            counterText.innerText = "تم القضاءعلى الأعداء بنجاح! 🎉";
             enemyImg.style.display = "none";
             setTimeout(() => {
-                alert("أحسنت يا بطل الأبطال! لقد دافعت عن المعسكر وطردت الأعداء بشجاعتك! 🏴⚔️");
+                alert("أحسنت يا بطل الأبطال! لقد دافعت عن الحق وقضيت على الأعداء بشجاعتك! 🏴⚔️");
                 endActiveMiniGame();
             }, 400);
         }
