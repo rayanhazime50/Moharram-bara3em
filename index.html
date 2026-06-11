@@ -795,10 +795,10 @@ function buildCampSortingGame(container, config) {
 
     container.innerHTML = `
         <div style="display:flex; justify-content:space-around; width:100%; margin-bottom:20px;">
-            <div id="tent-hussein" class="tent target-tent" data-camp-type="hussein" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:150px; transition: background 0.3s;">
+            <div id="tent-hussein" class="tent target-tent" data-camp-type="hussein" style="border:2px dashed var(--gold); padding:10px; width:120px; min-height:150px;">
                 <p>(ع)معسكر الإمام الحسين</p>
             </div>
-            <div id="tent-yazeed" class="tent target-tent" data-camp-type="yazeed" style="border:2px dashed red; padding:10px; width:120px; min-height:150px; transition: background 0.3s;">
+            <div id="tent-yazeed" class="tent target-tent" data-camp-type="yazeed" style="border:2px dashed red; padding:10px; width:120px; min-height:150px;">
                 <p>معسكر يزيد </p>
             </div>
         </div>
@@ -811,9 +811,12 @@ function buildCampSortingGame(container, config) {
     `;
 
     setTimeout(() => {
-        // تفعيل السحب للصور مع خاصية العودة التلقائية إذا لم تُقبل
+        // 1. تفعيل السحب للصور مع جعلها تعود تلقائياً إذا لم يتم قبولها برمجياً
         $(".drag-item").draggable({
-            revert: "invalid", // تعود لمكانها تلقائياً إذا رُميت في خيمة خاطئة
+            revert: function(dropped) {
+                // إذا لم يتم إسقاطها في الخيمة الصحيحة (dropped === false)، تعود لمكانها فوراً
+                return !dropped;
+            },
             containment: "#main-game-area",
             cursor: "move",
             start: function() {
@@ -821,48 +824,33 @@ function buildCampSortingGame(container, config) {
             }
         });
 
-        // تفعيل استقبال الخيام
+        // 2. تفعيل استقبال الخيام مع شرط فحص صارم
         $(".target-tent").droppable({
-            hoverClass: "ui-state-hover", // يمكنك إضافة تأثير بصري عند حوم الصورة فوق الخيمة
+            // الخيمة ستوافق على استقبال العنصر فقط إذا كان الـ data-camp للصورة يطابق الـ data-camp-type للخيمة
+            accept: function(draggable) {
+                return draggable.attr("data-camp") === $(this).attr("data-camp-type");
+            },
             drop: function(event, ui) {
                 const draggedElement = ui.draggable;
                 const targetTent = this;
-                
-                const correctCamp = draggedElement.dataset.camp; // المعسكر الحقيقي للصورة (hussein أو yazeed)
-                const targetCamp = targetTent.dataset.campType; // نوع الخيمة الحالي
 
-                if (correctCamp === targetCamp) {
-                    // --- الحالة الأولى: الإجابة صحيحة ---
-                    // إلغاء الخصائص المطلقة للحركة وتثبيتها داخل الخيمة
-                    ui.draggable.css({
-                        top: 0,
-                        left: 0,
-                        position: "relative",
-                        display: "inline-block"
-                    });
-                    
-                    targetTent.appendChild(draggedElement); // نقل الصورة داخل الـ HTML للخيمة
-                    ui.draggable.draggable("disable"); // قفل السحب تماماً
-                    
-                    campCorrectCount++;
-                    checkCampGameCompletion(config.items.length);
-                } else {
-                    // --- الحالة الثانية: الإجابة خاطئة (هنا السر!) ---
-                    // إجبار الصورة على العودة إلى صندوق الصور السفلي (items-pool) بأنيميشن طائر
-                    alert("فكر مجدداً يا بطل، هذه الصفة لا تنتمي لهذا المعسكر! 🤔");
-                    
-                    // نطلب من الصورة العودة إلى نقطة البداية (0,0) بالنسبة لمكانها الأصلي
-                    ui.draggable.animate({
-                        top: 0,
-                        left: 0
-                    }, 500);
-                }
+                // بما أن دالة accept قامت بالفلترة، فكل عنصر يصل إلى هنا هو بالتأكيد إجابة صحيحة 100%
+                ui.draggable.css({
+                    top: 0,
+                    left: 0,
+                    position: "relative",
+                    display: "inline-block"
+                });
+                
+                targetTent.appendChild(draggedElement); // نقل الصورة داخل الحاوية في الـ HTML
+                ui.draggable.draggable("disable"); // قفل السحب عن الصورة نهائياً
+                
+                campCorrectCount++;
+                checkCampGameCompletion(config.items.length); // فحص الفوز والانتقال
             }
         });
     }, 50);
 }
-
-
 
 
 
