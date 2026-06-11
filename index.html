@@ -811,12 +811,9 @@ function buildCampSortingGame(container, config) {
     `;
 
     setTimeout(() => {
-        // 1. تفعيل السحب للصور مع جعلها تعود تلقائياً إذا لم يتم قبولها برمجياً
+        // 1. تفعيل السحب للصور مع خاصية العودة الذكية عند عدم قبولها
         $(".drag-item").draggable({
-            revert: function(dropped) {
-                // إذا لم يتم إسقاطها في الخيمة الصحيحة (dropped === false)، تعود لمكانها فوراً
-                return !dropped;
-            },
+            revert: "invalid", // تعود لمكانها إذا لم يتم إسقاطها في عنصر droppable متوافق
             containment: "#main-game-area",
             cursor: "move",
             start: function() {
@@ -824,38 +821,47 @@ function buildCampSortingGame(container, config) {
             }
         });
 
-        // 2. تفعيل استقبال الخيام مع شرط فحص صارم
+        // 2. تفعيل استقبال الخيام لجميع الصور، والفحص يتم بدقة بالداخل
         $(".target-tent").droppable({
-            // الخيمة ستوافق على استقبال العنصر فقط إذا كان الـ data-camp للصورة يطابق الـ data-camp-type للخيمة
-            accept: function(draggable) {
-                return draggable.attr("data-camp") === $(this).attr("data-camp-type");
-            },
+            accept: ".drag-item", // تستقبل أي صورة أولاً للحفاظ على مرونة الحركة
             drop: function(event, ui) {
                 const draggedElement = ui.draggable;
                 const targetTent = this;
 
-                // بما أن دالة accept قامت بالفلترة، فكل عنصر يصل إلى هنا هو بالتأكيد إجابة صحيحة 100%
-                ui.draggable.css({
-                    top: 0,
-                    left: 0,
-                    position: "relative",
-                    display: "inline-block"
-                });
-                
-                targetTent.appendChild(draggedElement); // نقل الصورة داخل الحاوية في الـ HTML
-                ui.draggable.draggable("disable"); // قفل السحب عن الصورة نهائياً
-                
-                campCorrectCount++;
-                checkCampGameCompletion(config.items.length); // فحص الفوز والانتقال
+                // قراءة المعسكرات باستخدام JavaScript الأصلي لضمان دقة القيمة 100%
+                const correctCamp = draggedElement.getAttribute("data-camp");
+                const targetCamp = targetTent.getAttribute("data-camp-type");
+
+                if (correctCamp === targetCamp) {
+                    // --- الحالة الأولى: الإجابة صحيحة ---
+                    ui.draggable.css({
+                        top: 0,
+                        left: 0,
+                        position: "relative",
+                        display: "inline-block",
+                        margin: "5px"
+                    });
+                    
+                    targetTent.appendChild(draggedElement); // نقل الصورة داخل الخيمة في الـ HTML
+                    ui.draggable.draggable("disable"); // قفل السحب تماماً عن هذه الصورة
+                    ui.draggable.css("cursor", "default");
+                    
+                    campCorrectCount++;
+                    checkCampGameCompletion(config.items.length); // فحص الفوز
+                } else {
+                    // --- الحالة الثانية: الإجابة خاطئة ---
+                    alert("فكر مجدداً يا بطل، هذه الصفة لا تنتمي لهذا المعسكر! 🤔");
+                    
+                    // إجبار الصورة على الطيران والعودة لمكانها الأصلي في الحوض السفلي فوراً
+                    ui.draggable.animate({
+                        top: 0,
+                        left: 0
+                    }, 400);
+                }
             }
         });
     }, 50);
-}
-
-
-
-
-        
+}        
         function checkCampGameCompletion(totalItems) {
     // إذا تساوى عدد الإجابات الصحيحة مع عدد الصور الإجمالي في المصفوفة
     if (campCorrectCount === totalItems) {
