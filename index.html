@@ -750,7 +750,7 @@
         };
         let currentPuzzleState = [];
         // متغير عالمي للموسيقى الخلفية للألعاب
-        let activeBgMusic = null;
+      
 
         window.onload = function() {
             // loadSavedProgress(); // معطل للتجربة من الصفر دائماً عند التحديث
@@ -840,37 +840,11 @@
 
 
 function initGameSequence() {
-    const currentDayData = gameDatabase[gameState.activeDay];
-    
-    // 1. تصفير أي صوت قديم فوراً
-    if (typeof activeBgMusic !== 'undefined' && activeBgMusic) {
-        try { activeBgMusic.pause(); } catch(e){}
-        activeBgMusic = null;
-    }
-
-    // 2. تشغيل الموسيقى
-    if (currentDayData && currentDayData.bgMusic) {
-        try {
-            activeBgMusic = new Audio(currentDayData.bgMusic);
-            activeBgMusic.loop = true;
-            activeBgMusic.volume = 0.25;
-            activeBgMusic.play().catch(e => console.log("حظر مؤقت للصوت"));
-        } catch(err) { console.log("خطأ صوتي"); }
-    }
-
-    // 3. ⏱️ السحر هنا: نطلب من المتصفح الانتظار 300 مللي ثانية (ثلث ثانية) 
-    // لكي ينتهي من معالجة الصوت تماماً، ثم يفتح الألعاب براحة وبدون أي تعارض!
-    setTimeout(function() {
-        gameState.activeGameIndex = 0;
-        try {
+            // تم حذف كود تشغيل الـ bgMusic بالكامل لضمان سرعة الدخول للألعاب
+            gameState.activeGameIndex = 0;
             loadGameEngine();
-        } catch(gameError) {
-            console.log("خطأ في محرك اللعبة الحالية:", gameError);
+            showScreen("scr-game");
         }
-        showScreen("scr-game");
-    }, 300); 
-}
-
 
 
 
@@ -1315,19 +1289,15 @@ function buildCampSortingGame(container, config) {
             document.getElementById("btn-next-game").style.display = "block";
         }
 
+        
         function progressGameSequence() {
-        cleanupGame();
+            cleanupGame();
         
             gameState.activeGameIndex++;
-            if(gameState.activeGameIndex < 4) {
+            if(gameState.activeGameIndex < gameDatabase[gameState.activeDay].games.length) {
                 loadGameEngine();
             } else {
                 alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على 5 ريشات 🪶");
-                // 🎵 إيقاف الموسيقى الخلفية فوراً لأن اليوم انتهى وعاد الطفل للخريطة
-                if (activeBgMusic) {
-                    activeBgMusic.pause();
-                    activeBgMusic = null;
-                }
                 if(!gameState.completedDays.includes(gameState.activeDay)) {
                     gameState.completedDays.push(gameState.activeDay);
                     gameState.collectedFeathers++;
@@ -1337,6 +1307,8 @@ function buildCampSortingGame(container, config) {
                 showScreen("scr-map");
             }
         }
+        
+        
 
         function viewFinalPrize() {
             showScreen("scr-prize");
@@ -1352,39 +1324,42 @@ function buildCampSortingGame(container, config) {
             }
         }
 
-        function showScreen(screenId) {
-            if (screenId === 'scr-map') {
-        cleanupGame(); // <--- تنظيف الذاكرة عند الخروج للخريطة
-    }
-            
-         if (activeBgMusic) {
-                    activeBgMusic.pause();
-                    activeBgMusic = null;
-                }   
+        
+       function showScreen(screenId) {
+            if(screenId === 'scr-map') {
+                cleanupGame();
+            }
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
             window.scrollTo(0, 0);
-        }
+        } 
         
-      function cleanupGame() {
-    if (window.gameInterval) clearInterval(window.gameInterval);
-    
-    const area = document.getElementById("main-game-area");
-    
-    // تفكيك تفعيل jQuery UI لمنع أي تعليق في الذاكرة
-    try {
-        $(".drag-item").draggable("destroy");
-        $(".target-tent").droppable("destroy");
-    } catch(e) {
-        // في حال لم تكن اللعبة الحالية هي لعبة الكامب
-    }
-
-    while (area.firstChild) {
-        area.removeChild(area.firstChild);
+        
+        function cleanupGame() {
+    // 1. تنظيف وتفريغ ساحة اللعبة بصرياً في الـ HTML
+    const area = document.getElementById("game-area");
+    if (area) {
+        area.innerHTML = "";
     }
     
-    console.log("الذاكرة تم تنظيفها بنجاح واختفت كل المستمعات السابقة");
-}       
+    // 2. إخفاء زر الانتقال للعبة التالية حتى يربح الطفل اللعبة الحالية
+    const nextBtn = document.getElementById("btn-next-game");
+    if (nextBtn) {
+        nextBtn.style.display = "none";
+    }
+    
+    // 3. 🧹 تصفير متغيرات لعبة ترتيب الصور بالضغط (Click to Order)
+    window.currentCorrectOrder = null;
+    window.userSelectedOrder = [];
+    
+    // 4. 📿 تصفير متغيرات لعبة العداد العبادي النوراني (Spiritual Counter)
+    window.spiritualTarget = null;
+    window.spiritualCurrent = null;
+    window.spiritualGiftTo = null;
+    
+    console.log("تم تنظيف ذاكرة الألعاب بنجاح والاستعداد للمرحلة القادمة! 🧼✨");
+}
+       
         
         
       function buildShadowMatchingGame(container, config) {
@@ -1597,70 +1572,139 @@ function buildSoldierQuizGame(container, config) {
 // ==========================================================================
 // 1. لعبة ترتيب الصور الديناميكية (تستقبل أي عدد من الصور)
 // ==========================================================================
+// ==========================================================================
+// 1. لعبة ترتيب الصور بالضغط واللمس الفوري (Click to Order)
+// ==========================================================================
 function buildImageOrderingGame(container, config) {
-    // config.correctOrder -> مصفوفة تحتوي على روابط الصور بأي عدد كان ['1.jpg', '2.jpg', '3.jpg', '4.jpg', ...]
-    
-    // خلط الصور عشوائياً للعرض أولاً
+    if (!config || !config.correctOrder) {
+        container.innerHTML = "<p style='color:red;'>خطأ: لم يتم العثور على مصفوفة الصور correctOrder في قاعدة البيانات!</p>";
+        return;
+    }
+
+    // تجهيز مصفوفة الترتيب الخاص بالطفل
+    window.userSelectedOrder = [];
+    window.currentCorrectOrder = config.correctOrder;
+
+    // خلط الصور عشوائياً للعرض في الحاوية العلوية
     let shuffledImages = [...config.correctOrder];
     do {
         shuffledImages.sort(function() { return Math.random() - 0.5; });
-    } while (JSON.stringify(shuffledImages) === JSON.stringify(config.correctOrder));
+    } while (JSON.stringify(shuffledImages) === JSON.stringify(config.correctOrder) && shuffledImages.length > 1);
 
-    // بناء النص الإرشادي
+    // 1. النص الإرشادي
     const descText = document.createElement("p");
-    descText.style.cssText = "font-size: 16px; color: #aaa; margin-bottom: 15px; text-align: center; padding: 0 10px;";
-    descText.innerText = "اسحب الصور ورتبها من اليمين إلى اليسار بالترتيب الصحيح للأحداث! 🧩";
+    descText.style.cssText = "font-size: 16px; color: #aaa; margin-bottom: 10px; text-align: center;";
+    descText.innerText = "اضغط على الصور بالترتيب الصحيح للأحداث لتنتقل إلى صناديق الإجابة! 👆⭐";
 
-    // حاوية السحب (تتعدل تلقائياً بحسب عدد الصور)
-    const sortableContainer = document.createElement("div");
-    sortableContainer.id = "sortable-container";
-    sortableContainer.style.cssText = "display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 110px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px; box-sizing: border-box;";
+    // 2. الحاوية العلوية: الخيارات المبعثرة المتاحة للضغط
+    const optionsContainer = document.createElement("div");
+    optionsContainer.id = "ordering-options-pool";
+    optionsContainer.style.cssText = "display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 100px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px dashed #444; border-radius: 12px; box-sizing: border-box; margin-bottom: 20px;";
 
-    // 📐 حساب حجم الكرت تلقائياً بناءً على عدد الصور لكي تتسع الشاشة لها
-    // إذا كان عدد الصور كبيراً (أكثر من 3)، يتم تصغير الحجم تلقائياً لتناسب الموبايل
+    // 3. الحاوية السفلية: الصناديق الفارغة المستهدفة التي ستمتلئ بالترتيب
+    const targetContainer = document.createElement("div");
+    targetContainer.id = "ordering-slots-target";
+    targetContainer.style.cssText = "display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 110px; padding: 15px; background: #1a1a1a; border: 2px solid var(--gold); border-radius: 15px; box-sizing: border-box;";
+
+    // تحديد المقاس الذكي للكروت بناءً على العدد لكي تتسع شاشة الهاتف
     const totalImages = config.correctOrder.length;
-    let cardSize = "90px"; // الحجم الافتراضي لـ 3 صور أو أقل
+    let cardSize = "90px";
     if (totalImages === 4) cardSize = "75px";
     if (totalImages >= 5) cardSize = "65px";
 
-    // توليد كروت الصور ديناميكياً بناءً على المصفوفة المرسلة
-    shuffledImages.forEach(function(imgSrc) {
+    // بناء الصناديق الفارغة (الخانات) في الأسفل أولاً بعدد الصور الموجودة
+    for (let i = 0; i < totalImages; i++) {
+        const slot = document.createElement("div");
+        slot.id = `order-slot-${i}`;
+        slot.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px dashed #444; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #555; font-size: 20px; font-weight: bold; background: rgba(0,0,0,0.3); transition: all 0.2s; position: relative;`;
+        slot.innerText = i + 1; // رقم الصندوق (1، 2، 3...)
+        targetContainer.appendChild(slot);
+    }
+
+    // توليد الصور المبعثرة في الحاوية العلوية وتفعيل الضغط عليها
+    shuffledImages.forEach(function(imgSrc, index) {
         const card = document.createElement("div");
-        card.className = "order-item-card";
+        card.className = "clickable-order-card";
+        card.id = `clickable-card-${index}`;
         card.setAttribute("data-src", imgSrc);
-        card.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; cursor: grab; background: var(--card-color); flex-shrink: 0;`;
+        card.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--card-color); transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); touch-action: manipulation;`;
 
         const img = document.createElement("img");
         img.src = imgSrc;
         img.style.cssText = "width: 100%; height: 100%; object-fit: cover; pointer-events: none;";
-
         card.appendChild(img);
-        sortableContainer.appendChild(card);
+
+        // عند الضغط على الصورة:
+        card.onclick = function() {
+            // إذا كانت الصورة مأخوذة ومصفوفة مسبقاً، نتجاهل الضغط
+            if (window.userSelectedOrder.includes(imgSrc)) return;
+
+            // إضافة الصورة لمصفوفة خيارات الطفل
+            window.userSelectedOrder.push(imgSrc);
+            const currentSlotIndex = window.userSelectedOrder.length - 1;
+
+            // العثور على الصندوق الفارغ المستهدف في الأسفل ونقل الصورة إليه بصرياً
+            const targetSlot = document.getElementById(`order-slot-${currentSlotIndex}`);
+            if (targetSlot) {
+                targetSlot.innerText = ""; // حذف الرقم الإرشادي
+                targetSlot.style.borderStyle = "solid";
+                targetSlot.style.borderColor = "var(--gold)";
+                
+                // إنشاء نسخة من الصورة تملأ الصندوق
+                const slotImg = document.createElement("img");
+                slotImg.src = imgSrc;
+                slotImg.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 8px; animation: popIn 0.2s ease;";
+                targetSlot.appendChild(slotImg);
+            }
+
+            // إخفاء الكرت الأصلي من الحاوية العلوية بنعومة للإشارة إلى أنه تم استخدامه
+            card.style.opacity = "0.2";
+            card.style.transform = "scale(0.9)";
+            card.style.pointerEvents = "none";
+
+            // فحص تلقائي عند اكتمال تعبئة كل الصناديق
+            if (window.userSelectedOrder.length === window.currentCorrectOrder.length) {
+                setTimeout(verifyClickOrderResult, 400);
+            }
+        };
+
+        optionsContainer.appendChild(card);
     });
 
-    const checkBtn = document.createElement("button");
-    checkBtn.id = "btn-check-order";
-    checkBtn.style.cssText = "margin-top: 20px; background-color: var(--gold); color: black; padding: 10px 25px; font-weight: bold; border-radius: 8px;";
-    checkBtn.innerText = "تحقق من الترتيب ✔️";
-    checkBtn.onclick = verifyImagesOrder;
+    // زر إعادة المحاولة وتصفير الترتيب في حال أخطأ الطفل
+    const resetBtn = document.createElement("button");
+    resetBtn.id = "btn-reset-order";
+    resetBtn.style.cssText = "margin-top: 15px; background-color: var(--accent-red); color: white; padding: 8px 18px; font-size: 14px; border-radius: 8px; display: block; border: none; cursor: pointer;";
+    resetBtn.innerText = "إعادة تعيين الترتيب 🔄";
+    resetBtn.onclick = function() {
+        buildImageOrderingGame(container, config); // إعادة بناء اللعبة لتصفيرها بالكامل
+    };
 
-    // إضافة العناصر للحاوية الرئيسية
     container.appendChild(descText);
-    container.appendChild(sortableContainer);
-    container.appendChild(checkBtn);
+    container.appendChild(optionsContainer);
+    container.appendChild(targetContainer);
+    container.appendChild(resetBtn);
+}
 
-    // حفظ الترتيب الصحيح في الذاكرة المؤقتة للفحص
-    window.currentCorrectOrder = config.correctOrder;
+function verifyClickOrderResult() {
+    let isCorrect = true;
+    for (let i = 0; i < window.currentCorrectOrder.length; i++) {
+        if (window.userSelectedOrder[i] !== window.currentCorrectOrder[i]) {
+            isCorrect = false;
+            break;
+        }
+    }
 
-    // تفعيل السحب اللمسي
-    setTimeout(function() {
-        $("#sortable-container").sortable({
-            axis: "x",
-            containment: "parent",
-            tolerance: "pointer",
-            placeholder: "ui-sortable-placeholder"
-        });
-    }, 50);
+    if (isCorrect) {
+        // إخفاء زر التصفير عند النجاح
+        if(document.getElementById("btn-reset-order")) {
+            document.getElementById("btn-reset-order").style.display = "none";
+        }
+        alert("رائع جداً يا بطل! لقد قمت بترتيب أحداث القصة التاريخية بشكل صحيح ومرتب تماماً! 🌟👏");
+        endActiveMiniGame();
+    } else {
+        alert("الترتيب الحالي غير صحيح للأحداث، اضغط على زر إعادة التعيين وحاول مجدداً بكل حماس! 🔄");
+    }
 }
 // 2. لعبة العداد العبادي (Spiritual Counter Game) - نسخة مصححة وآمنة
 // ==========================================================================
