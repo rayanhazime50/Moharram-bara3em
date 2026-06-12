@@ -1576,107 +1576,131 @@ function buildSoldierQuizGame(container, config) {
 // ==========================================================================
 // 1. لعبة ترتيب الصور بالضغط واللمس الفوري (نسخة مصححة تمنع التكرار)
 // ==========================================================================
+
+
+
+
+// ==========================================================================
+// 1. لعبة ترتيب الصور بالضغط - النسخة الكبيرة والمطورة مع الانتقال التلقائي
+// ==========================================================================
 function buildImageOrderingGame(container, config) {
     if (!config || !config.correctOrder) {
         container.innerHTML = "<p style='color:red;'>خطأ: لم يتم العثور على مصفوفة الصور correctOrder في قاعدة البيانات!</p>";
         return;
     }
 
-    // 🌟 الحل السحري هنا: تنظيف الحاوية تماماً قبل بناء اللعبة لمنع تكرار الفورم والصناديق
+    // تنظيف الحاوية تماماً قبل البناء
     container.innerHTML = "";
 
-    // تجهيز مصفوفة الترتيب الخاص بالطفل
     window.userSelectedOrder = [];
     window.currentCorrectOrder = config.correctOrder;
 
-    // خلط الصور عشوائياً للعرض في الحاوية العلوية
-    let shuffledImages = [...config.correctOrder];
-    do {
-        shuffledImages.sort(function() { return Math.random() - 0.5; });
-    } while (JSON.stringify(shuffledImages) === JSON.stringify(config.correctOrder) && shuffledImages.length > 1);
-
     // 1. النص الإرشادي
     const descText = document.createElement("p");
-    descText.style.cssText = "font-size: 16px; color: #aaa; margin-bottom: 10px; text-align: center;";
+    descText.style.cssText = "font-size: 18px; color: #fff; margin-bottom: 15px; text-align: center; font-weight: bold;";
     descText.innerText = "اضغط على الصور بالترتيب الصحيح للأحداث لتنتقل إلى صناديق الإجابة! 👆⭐";
 
-    // 2. الحاوية العلوية: الخيارات المبعثرة المتاحة للضغط
+    // 2. الحاوية العلوية: خيارات الصور المبعثرة
     const optionsContainer = document.createElement("div");
     optionsContainer.id = "ordering-options-pool";
-    optionsContainer.style.cssText = "display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 100px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px dashed #444; border-radius: 12px; box-sizing: border-box; margin-bottom: 20px;";
+    optionsContainer.style.cssText = "display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 180px; padding: 15px; background: rgba(255,255,255,0.03); border: 2px dashed #444; border-radius: 12px; box-sizing: border-box; margin-bottom: 25px;";
 
-    // 3. الحاوية السفلية: الصناديق الفارغة المستهدفة التي ستمتلئ بالترتيب
+    // 3. الحاوية السفلية: الصناديق الفارغة المستهدفة
     const targetContainer = document.createElement("div");
     targetContainer.id = "ordering-slots-target";
-    targetContainer.style.cssText = "display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 110px; padding: 15px; background: #1a1a1a; border: 2px solid var(--gold); border-radius: 15px; box-sizing: border-box;";
+    targetContainer.style.cssText = "display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 190px; padding: 20px; background: #1a1a1a; border: 3px solid var(--gold); border-radius: 15px; box-sizing: border-box;";
 
-    // تحديد المقاس الذكي للكروت بناءً على العدد لكي تتسع شاشة الهاتف
+    // 📐 تم مضاعفة الحجم (الحجم الافتراضي الكبير جداً لرؤية التفاصيل)
     const totalImages = config.correctOrder.length;
-    let cardSize = "90px";
-    if (totalImages === 4) cardSize = "75px";
-    if (totalImages >= 5) cardSize = "65px";
+    let cardSize = "160px"; 
+    if (totalImages === 4) cardSize = "140px";
+    if (totalImages >= 5) cardSize = "110px"; // تصغير ذكي فقط إذا كان العدد كبيراً لكي لا تخرج من الشاشة
 
-    // بناء الصناديق الفارغة (الخانات) في الأسفل أولاً بعدد الصور الموجودة
-    for (let i = 0; i < totalImages; i++) {
-        const slot = document.createElement("div");
-        slot.id = `order-slot-${i}`;
-        slot.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px dashed #444; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #555; font-size: 20px; font-weight: bold; background: rgba(0,0,0,0.3); transition: all 0.2s; position: relative;`;
-        slot.innerText = i + 1; // رقم الصندوق (1، 2، 3...)
-        targetContainer.appendChild(slot);
+    // دالة داخلية مخصصة لإعادة خلط وعرض الصور في الأعلى
+    function renderShuffledOptions() {
+        optionsContainer.innerHTML = "";
+        
+        let shuffledImages = [...config.correctOrder];
+        do {
+            shuffledImages.sort(function() { return Math.random() - 0.5; });
+        } while (JSON.stringify(shuffledImages) === JSON.stringify(config.correctOrder) && shuffledImages.length > 1);
+
+        shuffledImages.forEach(function(imgSrc, index) {
+            const card = document.createElement("div");
+            card.className = "clickable-order-card";
+            card.setAttribute("data-src", imgSrc);
+            card.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 3px solid var(--gold); border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--card-color); transition: all 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.4); touch-action: manipulation; display: block;`;
+
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            // استخدام max-width و max-height لضمان ظهور التفاصيل دون اختفاء ملامح الصورة
+            img.style.cssText = "width: 100%; height: 100%; object-fit: contain; background: #222; pointer-events: none; display: block;";
+            
+            // إضافة ميزة فحص برمي ذكي في حال لم يجد المتصفح الصورة على السيرفر أو الجهاز
+            img.onerror = function() {
+                card.style.background = "var(--accent-red)";
+                card.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; padding:5px; text-align:center; font-size:11px; color:white;">لم يتم العثور على المسار المكتوب للصورة!</div>`;
+            };
+
+            card.appendChild(img);
+
+            card.onclick = function() {
+                if (window.userSelectedOrder.includes(imgSrc)) return;
+
+                window.userSelectedOrder.push(imgSrc);
+                const currentSlotIndex = window.userSelectedOrder.length - 1;
+
+                const targetSlot = document.getElementById(`order-slot-${currentSlotIndex}`);
+                if (targetSlot) {
+                    targetSlot.innerHTML = ""; 
+                    targetSlot.style.borderStyle = "solid";
+                    targetSlot.style.borderColor = "var(--gold)";
+                    
+                    const slotImg = document.createElement("img");
+                    slotImg.src = imgSrc;
+                    slotImg.style.cssText = "width: 100%; height: 100%; object-fit: contain; background: #222; border-radius: 8px;";
+                    targetSlot.appendChild(slotImg);
+                }
+
+                card.style.opacity = "0.15";
+                card.style.transform = "scale(0.85)";
+                card.style.pointerEvents = "none";
+
+                // فحص تلقائي فوري عند اكتمال ملء كافة الصناديق
+                if (window.userSelectedOrder.length === window.currentCorrectOrder.length) {
+                    setTimeout(verifyClickOrderResult, 400);
+                }
+            };
+
+            optionsContainer.appendChild(card);
+        });
     }
 
-    // توليد الصور المبعثرة في الحاوية العلوية وتفعيل الضغط عليها
-    shuffledImages.forEach(function(imgSrc, index) {
-        const card = document.createElement("div");
-        card.className = "clickable-order-card";
-        card.id = `clickable-card-${index}`;
-        card.setAttribute("data-src", imgSrc);
-        card.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; cursor: pointer; background: var(--card-color); transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); touch-action: manipulation;`;
+    // بناء الصناديق السفلية الفارغة الكبيرة
+    function resetTargetSlots() {
+        targetContainer.innerHTML = "";
+        for (let i = 0; i < totalImages; i++) {
+            const slot = document.createElement("div");
+            slot.id = `order-slot-${i}`;
+            slot.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 3px dashed #555; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #777; font-size: 26px; font-weight: bold; background: rgba(0,0,0,0.4); transition: all 0.2s; position: relative;`;
+            slot.innerText = i + 1;
+            targetContainer.appendChild(slot);
+        }
+    }
 
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.style.cssText = "width: 100%; height: 100%; object-fit: cover; pointer-events: none;";
-        card.appendChild(img);
+    renderShuffledOptions();
+    resetTargetSlots();
 
-        // عند الضغط على الصورة:
-        card.onclick = function() {
-            if (window.userSelectedOrder.includes(imgSrc)) return;
-
-            window.userSelectedOrder.push(imgSrc);
-            const currentSlotIndex = window.userSelectedOrder.length - 1;
-
-            const targetSlot = document.getElementById(`order-slot-${currentSlotIndex}`);
-            if (targetSlot) {
-                targetSlot.innerText = ""; 
-                targetSlot.style.borderStyle = "solid";
-                targetSlot.style.borderColor = "var(--gold)";
-                
-                const slotImg = document.createElement("img");
-                slotImg.src = imgSrc;
-                slotImg.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 8px;";
-                targetSlot.appendChild(slotImg);
-            }
-
-            card.style.opacity = "0.2";
-            card.style.transform = "scale(0.9)";
-            card.style.pointerEvents = "none";
-
-            if (window.userSelectedOrder.length === window.currentCorrectOrder.length) {
-                setTimeout(verifyClickOrderResult, 400);
-            }
-        };
-
-        optionsContainer.appendChild(card);
-    });
-
-    // زر إعادة المحاولة وتصفير الترتيب
+    // 4. زر إعادة تعيين الترتيب الذكي والمقاس المتوسط المناسب بالأسفل
     const resetBtn = document.createElement("button");
     resetBtn.id = "btn-reset-order";
-    resetBtn.style.cssText = "margin-top: 15px; background-color: var(--accent-red); color: white; padding: 8px 18px; font-size: 14px; border-radius: 8px; display: block; border: none; cursor: pointer; margin-left: auto; margin-right: auto;";
+    resetBtn.style.cssText = "margin-top: 25px; background-color: var(--accent-red); color: white; padding: 10px 24px; font-weight: bold; font-size: 15px; border-radius: 8px; display: block; border: none; cursor: pointer; margin-left: auto; margin-right: auto;";
     resetBtn.innerText = "إعادة تعيين الترتيب 🔄";
+    
     resetBtn.onclick = function() {
-        // سيعيد بناء اللعبة في نفس الـ container النظيف تماماً
-        buildImageOrderingGame(container, config); 
+        window.userSelectedOrder = []; 
+        resetTargetSlots();            
+        renderShuffledOptions();       
     };
 
     container.appendChild(descText);
@@ -1684,6 +1708,30 @@ function buildImageOrderingGame(container, config) {
     container.appendChild(targetContainer);
     container.appendChild(resetBtn);
 }
+
+function verifyClickOrderResult() {
+    let isCorrect = true;
+    for (let i = 0; i < window.currentCorrectOrder.length; i++) {
+        if (window.userSelectedOrder[i] !== window.currentCorrectOrder[i]) {
+            isCorrect = false;
+            break;
+        }
+    }
+
+    if (isCorrect) {
+        if(document.getElementById("btn-reset-order")) {
+            document.getElementById("btn-reset-order").style.display = "none";
+        }
+        alert("أحسنت يا بطل! لقد رتبت الأحداث والصور بشكل ذكي وصحيح جداً! 🌟👏");
+        
+        // 🌟 ينقلك تلقائياً ومباشرة للعبة التالية في خطة هذا اليوم!
+        endActiveMiniGame(); 
+    } else {
+        alert("الترتيب الحالي غير صحيح للأحداث، اضغط على زر إعادة التعيين وحاول مجدداً بكل حماس! 🔄");
+    }
+}
+
+
 
 
 // 2. لعبة العداد العبادي (Spiritual Counter Game) - نسخة مصححة وآمنة
