@@ -839,36 +839,34 @@
 function initGameSequence() {
     const currentDayData = gameDatabase[gameState.activeDay];
     
-    // 1. إيقاف أي موسيقى سابقة لمنع التداخل
+    // 1. تصفير أي صوت قديم فوراً
     if (typeof activeBgMusic !== 'undefined' && activeBgMusic) {
-        try {
-            activeBgMusic.pause();
-        } catch(e) { console.log("خطأ في إيقاف الصوت:", e); }
+        try { activeBgMusic.pause(); } catch(e){}
         activeBgMusic = null;
     }
 
-    // 2. محاولة تشغيل الموسيقى الجديدة بأمان داخل try...catch
+    // 2. تشغيل الموسيقى
     if (currentDayData && currentDayData.bgMusic) {
         try {
             activeBgMusic = new Audio(currentDayData.bgMusic);
             activeBgMusic.loop = true;
-            activeBgMusic.volume = 0.25; // صوت خلفية هادئ
-            
-            // التشغيل مستفيداً من كبسة الزر الحالية
-            activeBgMusic.play().catch(function(err) {
-                console.log("المتصفح حظر التشغيل التلقائي للصوت، سيتم التجاوز وفتح اللعبة:", err);
-            });
-        } catch(audioError) {
-            console.log("فشل تجهيز ملف الصوت، سيتم تجاوز الخطأ لكي لا تعلّق اللعبة:", audioError);
-        }
+            activeBgMusic.volume = 0.25;
+            activeBgMusic.play().catch(e => console.log("حظر مؤقت للصوت"));
+        } catch(err) { console.log("خطأ صوتي"); }
     }
 
-    // 3. ضمان الدخول للعبة دائماً حتى لو فشل أو حظر الصوت
-    gameState.activeGameIndex = 0;
-    loadGameEngine();
-    showScreen("scr-game");
+    // 3. ⏱️ السحر هنا: نطلب من المتصفح الانتظار 300 مللي ثانية (ثلث ثانية) 
+    // لكي ينتهي من معالجة الصوت تماماً، ثم يفتح الألعاب براحة وبدون أي تعارض!
+    setTimeout(function() {
+        gameState.activeGameIndex = 0;
+        try {
+            loadGameEngine();
+        } catch(gameError) {
+            console.log("خطأ في محرك اللعبة الحالية:", gameError);
+        }
+        showScreen("scr-game");
+    }, 300); 
 }
-
 
 
 
