@@ -531,7 +531,6 @@
             1: {
                 title: "اليوم الأول: مظاهر إحياء عاشوراء .",
                 audio: "day1.mp3",
-                bgMusic:"bgday1.mp3",
                 games: [
                     {
                         type: "memory",
@@ -617,7 +616,6 @@
             2: {
                 title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
                 audio: "day2.m4a",
-                bgMusic:"bgday2.mp3",
                 games: [
                     /*{
                         type: "camp_sorting",
@@ -679,10 +677,21 @@
                 3: {
                 title: "اليوم الثالث: الأمانة(مسلم بن عقيل)",
                 audio: "day2.m4a",
-                bgMusic:"bgday2.mp3",
                 games: [
                 
                 // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
 
 
 {
@@ -693,19 +702,6 @@
 
 
 
-
-{
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "order1.png",
-        "order2.png",
-        "order3.png",
-        "order4.png",
-        "order5.png",
-        "order6.png"
-    ]
-},
 
                     {
                         type: "pattern",
@@ -1569,17 +1565,25 @@ function buildSoldierQuizGame(container, config) {
 } 
 
    
+
+
+
 // ==========================================================================
-// 1. لعبة ترتيب الصور الديناميكية (تستقبل أي عدد من الصور)
+// 1. لعبة ترتيب الصور بالضغط واللمس الفوري (نسخة مصححة تمنع التكرار)
 // ==========================================================================
+
+
 // ==========================================================================
-// 1. لعبة ترتيب الصور بالضغط واللمس الفوري (Click to Order)
+// 1. لعبة ترتيب الصور بالضغط واللمس الفوري (نسخة مصححة تمنع التكرار)
 // ==========================================================================
 function buildImageOrderingGame(container, config) {
     if (!config || !config.correctOrder) {
         container.innerHTML = "<p style='color:red;'>خطأ: لم يتم العثور على مصفوفة الصور correctOrder في قاعدة البيانات!</p>";
         return;
     }
+
+    // 🌟 الحل السحري هنا: تنظيف الحاوية تماماً قبل بناء اللعبة لمنع تكرار الفورم والصناديق
+    container.innerHTML = "";
 
     // تجهيز مصفوفة الترتيب الخاص بالطفل
     window.userSelectedOrder = [];
@@ -1636,33 +1640,27 @@ function buildImageOrderingGame(container, config) {
 
         // عند الضغط على الصورة:
         card.onclick = function() {
-            // إذا كانت الصورة مأخوذة ومصفوفة مسبقاً، نتجاهل الضغط
             if (window.userSelectedOrder.includes(imgSrc)) return;
 
-            // إضافة الصورة لمصفوفة خيارات الطفل
             window.userSelectedOrder.push(imgSrc);
             const currentSlotIndex = window.userSelectedOrder.length - 1;
 
-            // العثور على الصندوق الفارغ المستهدف في الأسفل ونقل الصورة إليه بصرياً
             const targetSlot = document.getElementById(`order-slot-${currentSlotIndex}`);
             if (targetSlot) {
-                targetSlot.innerText = ""; // حذف الرقم الإرشادي
+                targetSlot.innerText = ""; 
                 targetSlot.style.borderStyle = "solid";
                 targetSlot.style.borderColor = "var(--gold)";
                 
-                // إنشاء نسخة من الصورة تملأ الصندوق
                 const slotImg = document.createElement("img");
                 slotImg.src = imgSrc;
-                slotImg.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 8px; animation: popIn 0.2s ease;";
+                slotImg.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 8px;";
                 targetSlot.appendChild(slotImg);
             }
 
-            // إخفاء الكرت الأصلي من الحاوية العلوية بنعومة للإشارة إلى أنه تم استخدامه
             card.style.opacity = "0.2";
             card.style.transform = "scale(0.9)";
             card.style.pointerEvents = "none";
 
-            // فحص تلقائي عند اكتمال تعبئة كل الصناديق
             if (window.userSelectedOrder.length === window.currentCorrectOrder.length) {
                 setTimeout(verifyClickOrderResult, 400);
             }
@@ -1671,13 +1669,14 @@ function buildImageOrderingGame(container, config) {
         optionsContainer.appendChild(card);
     });
 
-    // زر إعادة المحاولة وتصفير الترتيب في حال أخطأ الطفل
+    // زر إعادة المحاولة وتصفير الترتيب
     const resetBtn = document.createElement("button");
     resetBtn.id = "btn-reset-order";
-    resetBtn.style.cssText = "margin-top: 15px; background-color: var(--accent-red); color: white; padding: 8px 18px; font-size: 14px; border-radius: 8px; display: block; border: none; cursor: pointer;";
+    resetBtn.style.cssText = "margin-top: 15px; background-color: var(--accent-red); color: white; padding: 8px 18px; font-size: 14px; border-radius: 8px; display: block; border: none; cursor: pointer; margin-left: auto; margin-right: auto;";
     resetBtn.innerText = "إعادة تعيين الترتيب 🔄";
     resetBtn.onclick = function() {
-        buildImageOrderingGame(container, config); // إعادة بناء اللعبة لتصفيرها بالكامل
+        // سيعيد بناء اللعبة في نفس الـ container النظيف تماماً
+        buildImageOrderingGame(container, config); 
     };
 
     container.appendChild(descText);
@@ -1686,26 +1685,7 @@ function buildImageOrderingGame(container, config) {
     container.appendChild(resetBtn);
 }
 
-function verifyClickOrderResult() {
-    let isCorrect = true;
-    for (let i = 0; i < window.currentCorrectOrder.length; i++) {
-        if (window.userSelectedOrder[i] !== window.currentCorrectOrder[i]) {
-            isCorrect = false;
-            break;
-        }
-    }
 
-    if (isCorrect) {
-        // إخفاء زر التصفير عند النجاح
-        if(document.getElementById("btn-reset-order")) {
-            document.getElementById("btn-reset-order").style.display = "none";
-        }
-        alert("رائع جداً يا بطل! لقد قمت بترتيب أحداث القصة التاريخية بشكل صحيح ومرتب تماماً! 🌟👏");
-        endActiveMiniGame();
-    } else {
-        alert("الترتيب الحالي غير صحيح للأحداث، اضغط على زر إعادة التعيين وحاول مجدداً بكل حماس! 🔄");
-    }
-}
 // 2. لعبة العداد العبادي (Spiritual Counter Game) - نسخة مصححة وآمنة
 // ==========================================================================
 function buildSpiritualCounterGame(container, config) {
