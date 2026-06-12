@@ -439,6 +439,27 @@
     }
 }
         
+       /* ستايل كروت لعبة ترتيب الصور */
+.order-item-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    touch-action: manipulation; /* يمنع تعليق اللمس على الموبايل */
+}
+.order-item-card:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(223, 183, 67, 0.4);
+}
+/* الرمز الافتراضي للمكان الفارغ أثناء السحب */
+.ui-sortable-placeholder {
+    border: 2px dashed var(--gold) !important;
+    background: rgba(223, 183, 67, 0.1) !important;
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    visibility: visible !important;
+} 
+        
+        
         
         
         
@@ -653,7 +674,67 @@
                         options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
                     }
                 ]
-            }
+                },
+                
+                3: {
+                title: "اليوم الثالث: الأمانة(مسلم بن عقيل)",
+                audio: "day2.m4a",
+                bgMusic:"bgday2.mp3",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.png",
+        "order2.png",
+        "order3.png",
+        "order4.png",
+        "order5.png",
+        "order6.png"
+    ]
+},
+
+
+
+{
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem21.jpeg", "Mem22.jpeg", "Mem23.jpeg", "Mem24.jpeg"]
+                    },
+                    {
+                        type: "pattern",
+                        instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
+                        sequence: ["boy.jpeg", "girl.jpeg"], 
+                        correctAnswers: ["boy.jpeg", "girl.jpeg"], 
+                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
+                    },
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة صحيحة! 📿",
+    surahName: "الصلاة على محمد و آل محمد(ص)",
+    targetCount: 3, // عدد المرات المطالب بها الطفل
+    giftTo: " مسلم ابن عقيل"
+}
+                
+                
+                
+                
+                
+                ] 
+                }
+                
+                
+         
+                
+           
+                
+                
         };
 
         let gameState = {
@@ -766,7 +847,8 @@
             if (currentDayData && currentDayData.bgMusic) {
                 activeBgMusic = new Audio(currentDayData.bgMusic);
                 activeBgMusic.loop = true; // تجعل الموسيقى تعيد نفسها تلقائياً
-                activeBgMusic.volume = 0.5; // خفض الصوت لـ 30% لكي لا يغطي على أصوات كبسات اللعبة
+                activeBgMusic.volume = 1; // خفض الصوت لـ 30% لكي لا يغطي على أصوات كبسات اللعبة
+                
                 activeBgMusic.play().catch(e => console.log("المتصفح يمنع التشغيل التلقائي قبل التفاعل:", e));
             }
             
@@ -810,6 +892,16 @@ else if(gameConfig.type === "soldier_quiz") {
 else if(gameConfig.type === "enemy_clicker") {
     buildEnemyClickerGame(area, gameConfig);
 }
+// أضيفي هذين الشرطين داخل دالة loadGameEngine() الأصلية:
+
+else if(gameConfig.type === "image_ordering") {
+    buildImageOrderingGame(area, gameConfig);
+} 
+else if(gameConfig.type === "spiritual_counter") {
+    buildSpiritualCounterGame(area, gameConfig);
+}
+
+
             
         }
 
@@ -1407,7 +1499,7 @@ function buildSoldierQuizGame(container, config) {
     let clicksLeft = config.enemies[currentEnemyIndex].requiredClicks;
     let isTransitioning = false; // متغير لمنع الكبس أثناء عرض صورة الهزيمة
 
-    const hitSound = new Audio(config.audioEffect || "assets/sounds/hit.mp3");
+    const hitSound = new Audio(config.audioEffect || "hit.mp3");
 
     const clickerContainer = document.createElement("div");
     clickerContainer.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; animation: fadeIn 0.4s ease;";
@@ -1476,14 +1568,136 @@ function buildSoldierQuizGame(container, config) {
                     enemyImg.style.transform = "scale(1) rotate(0deg)";
                 }, 200);
 
-            }, 1200); // يمكنك زيادة أو إنقاص هذا الوقت حسب رغبتكِ
+            }, 5000); // يمكنك زيادة أو إنقاص هذا الوقت حسب رغبتكِ
         }
     };
 
     updateEnemyDisplay();
 } 
 
-        
+   
+// ==========================================================================
+// 1. لعبة ترتيب الصور الديناميكية (تستقبل أي عدد من الصور)
+// ==========================================================================
+function buildImageOrderingGame(container, config) {
+    // config.correctOrder -> مصفوفة تحتوي على روابط الصور بأي عدد كان ['1.jpg', '2.jpg', '3.jpg', '4.jpg', ...]
+    
+    // خلط الصور عشوائياً للعرض أولاً
+    let shuffledImages = [...config.correctOrder];
+    do {
+        shuffledImages.sort(function() { return Math.random() - 0.5; });
+    } while (JSON.stringify(shuffledImages) === JSON.stringify(config.correctOrder));
+
+    // بناء النص الإرشادي
+    const descText = document.createElement("p");
+    descText.style.cssText = "font-size: 16px; color: #aaa; margin-bottom: 15px; text-align: center; padding: 0 10px;";
+    descText.innerText = "اسحب الصور ورتبها من اليمين إلى اليسار بالترتيب الصحيح للأحداث! 🧩";
+
+    // حاوية السحب (تتعدل تلقائياً بحسب عدد الصور)
+    const sortableContainer = document.createElement("div");
+    sortableContainer.id = "sortable-container";
+    sortableContainer.style.cssText = "display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; width: 100%; min-height: 110px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px; box-sizing: border-box;";
+
+    // 📐 حساب حجم الكرت تلقائياً بناءً على عدد الصور لكي تتسع الشاشة لها
+    // إذا كان عدد الصور كبيراً (أكثر من 3)، يتم تصغير الحجم تلقائياً لتناسب الموبايل
+    const totalImages = config.correctOrder.length;
+    let cardSize = "90px"; // الحجم الافتراضي لـ 3 صور أو أقل
+    if (totalImages === 4) cardSize = "75px";
+    if (totalImages >= 5) cardSize = "65px";
+
+    // توليد كروت الصور ديناميكياً بناءً على المصفوفة المرسلة
+    shuffledImages.forEach(function(imgSrc) {
+        const card = document.createElement("div");
+        card.className = "order-item-card";
+        card.setAttribute("data-src", imgSrc);
+        card.style.cssText = `width: ${cardSize}; height: ${cardSize}; border: 2px solid var(--gold); border-radius: 10px; overflow: hidden; cursor: grab; background: var(--card-color); flex-shrink: 0;`;
+
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        img.style.cssText = "width: 100%; height: 100%; object-fit: cover; pointer-events: none;";
+
+        card.appendChild(img);
+        sortableContainer.appendChild(card);
+    });
+
+    const checkBtn = document.createElement("button");
+    checkBtn.id = "btn-check-order";
+    checkBtn.style.cssText = "margin-top: 20px; background-color: var(--gold); color: black; padding: 10px 25px; font-weight: bold; border-radius: 8px;";
+    checkBtn.innerText = "تحقق من الترتيب ✔️";
+    checkBtn.onclick = verifyImagesOrder;
+
+    // إضافة العناصر للحاوية الرئيسية
+    container.appendChild(descText);
+    container.appendChild(sortableContainer);
+    container.appendChild(checkBtn);
+
+    // حفظ الترتيب الصحيح في الذاكرة المؤقتة للفحص
+    window.currentCorrectOrder = config.correctOrder;
+
+    // تفعيل السحب اللمسي
+    setTimeout(function() {
+        $("#sortable-container").sortable({
+            axis: "x",
+            containment: "parent",
+            tolerance: "pointer",
+            placeholder: "ui-sortable-placeholder"
+        });
+    }, 50);
+}
+// 2. لعبة العداد العبادي (Spiritual Counter Game) - نسخة مصححة وآمنة
+// ==========================================================================
+function buildSpiritualCounterGame(container, config) {
+    let currentCount = config.targetCount;
+
+    container.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+            <div style="background: rgba(21, 66, 51, 0.2); border: 2px solid var(--ashura-green); padding: 15px; border-radius: 15px; width: 90%;">
+                <p style="font-size: 18px; font-weight: bold; margin: 0; color: var(--gold);">هدية اليوم النورانية 🎁</p>
+                <p style="font-size: 15px; margin: 8px 0 0 0;">المطلوب: قراءة <b id="spiritual-surah-name"></b> (<b id="spiritual-target-count"></b> مرات) وإهدائها إلى <b id="spiritual-gift-to"></b>.</p>
+            </div>
+
+            <div id="counter-circle" style="width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--gold); display: flex; flex-direction: column; justify-content: center; align-items: center; background: #1a1a1a; box-shadow: 0 0 15px rgba(223, 183, 67, 0.2); transition: all 0.2s;">
+                <span id="lbl-remain-count" style="font-size: 36px; font-weight: bold; color: white;"></span>
+                <span style="font-size: 12px; color: #aaa;">متبقي</span>
+            </div>
+
+            <button id="btn-count-tap" style="width: 80%; max-width: 250px; background: var(--ashura-green); height: 60px; font-size: 20px; border-radius: 15px;" onclick="handleSpiritualTap()">قرأتُ مرة واحدة 📿</button>
+        </div>
+    `;
+
+    // حقن النصوص بأمان لمنع أي مشاكل في الأحرف الخاصة أو السنتاكس
+    document.getElementById("spiritual-surah-name").innerText = config.surahName;
+    document.getElementById("spiritual-target-count").innerText = config.targetCount;
+    document.getElementById("spiritual-gift-to").innerText = config.giftTo;
+    document.getElementById("lbl-remain-count").innerText = currentCount;
+
+    window.spiritualTarget = config.targetCount;
+    window.spiritualCurrent = currentCount;
+    window.spiritualGiftTo = config.giftTo;
+}
+
+function handleSpiritualTap() {
+    if (window.spiritualCurrent > 0) {
+        window.spiritualCurrent--;
+        document.getElementById("lbl-remain-count").innerText = window.spiritualCurrent;
+
+        const circle = document.getElementById("counter-circle");
+        circle.style.transform = "scale(1.08)";
+        setTimeout(function() { circle.style.transform = "scale(1)"; }, 150);
+
+        if (window.spiritualCurrent === 0) {
+            document.getElementById("btn-count-tap").disabled = true;
+            document.getElementById("btn-count-tap").style.opacity = "0.5";
+            document.getElementById("counter-circle").style.borderColor = "#00ff00";
+            
+            setTimeout(function() {
+                alert("تقبل الله أعمالك يا بطل! 🕊️ لقد تم إرسال ثواب القراءة هديّة مأجورة إلى " + window.spiritualGiftTo + ".");
+                endActiveMiniGame();
+            }, 400);
+        }
+    }
+}
+         
 
         
         
