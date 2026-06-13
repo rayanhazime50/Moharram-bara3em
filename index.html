@@ -532,13 +532,7 @@
                 title: "اليوم الأول: مظاهر إحياء عاشوراء .",
                 audio: "day1.mp3",
                 games: [
-                    {
-                        type: "memory",
-                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
-                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
-                    },
-                    
-                    
+                
                  {
                         type: "classification",
                         instruction: "انظر إلى الصورة جيداً، هل هذا التصرف صحيح أم خاطئ؟ 🤔",
@@ -552,6 +546,52 @@
                     } ,  
                     
                     
+                {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+             requiredClicks: 8 
+        }
+        /*{ 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }*/
+    ]
+},
+                    
+                    
+       {
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
+                    },
+                    {
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "زيارة الإمام الحسين(ع) المختصرة",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                    
+                                   
                     
                     
                     
@@ -571,47 +611,8 @@
                         instruction: "اضغط على مربعات البازل لترتيب الصورة بالشكل الصحيح! 🧩",
                         image: "Puzz1.jpeg"
                     },*/
-                    
-                    {
-    type: "soldier_quiz",
-    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
-    items: [
-        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
-        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
-        { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "Soldier11.jpeg", isCorrect: true }
-    ]
-},
-
-
-{
-    type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
-    audioEffect: "hit.mp3",
-    enemies: [
-        { 
-            image: "enemy1.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
-            requiredClicks: 5 
-        },
-        { 
-            image: "enemy11.jpeg", 
-            defeatedImage: "dead11.jpeg", 
-            requiredClicks: 8 
-        }
-    ]
-}
-
-
-
-
-
-
-
-
-                    
-           
-                                   ]
+                   
+            ]
             },
             2: {
                 title: "اليوم الثاني: لماذا نحيي عاشوراء؟",
@@ -648,6 +649,39 @@
                             { image: "wrong22.jpeg", isCorrect: false }
                         ]
                     },
+                    
+                      {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+ 
+                    
+                    
                     {
             type: "shadow_matching",
             instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
@@ -658,24 +692,102 @@
                 "wshadow11.jpeg"           // ظل خاطئ ثاني
             ]
         },
+        {
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد  قراءة ! 📿",
+    surahName: "دعاء الحجة(عج)",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
                     
-                    {
-                        type: "memory",
-                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
-                        images: ["Mem21.jpeg", "Mem22.jpeg", "Mem23.jpeg", "Mem24.jpeg"]
-                    },
-                    {
-                        type: "pattern",
-                        instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
-                        sequence: ["boy.jpeg", "girl.jpeg"], 
-                        correctAnswers: ["boy.jpeg", "girl.jpeg"], 
-                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
-                    }
+                
+                    
                 ]
                 },
                 
                 3: {
-                title: "اليوم الثالث: الأمانة(مسلم بن عقيل)",
+                title: "اليوم الثالث: نصرة الحق ( الحر الرياحي )",
+                audio: "day3.mp3",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "رتب الصور حسب التسلسل القصصي الذي روته لك العصفورة 🪶",
+    correctOrder: [
+        "hor1.jpeg",
+        "hor2.jpeg",
+        "hor3.jpeg",
+        "hor4.jpeg",
+        "hor5.jpeg",
+        "hor6.jpeg"
+    ]
+},
+
+ {
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["hor1.jpeg", "hor3.jpeg", "hor4.jpeg", "hor5.jpeg"]
+                    },
+
+
+                    
+                    
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "الصلاة على محمد و آل محمد(ص)",
+    targetCount: 3, // عدد المرات المطالب بها الطفل
+    giftTo: " الامام صحب العصر والزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                
+                
+                
+         4: {
+                title: "اليوم الرابع:  الصدق و الأمانة( مسلم بن عقيل)",
                 audio: "day2.m4a",
                 games: [
                 
@@ -694,31 +806,535 @@
 },
 
 
-{
-                        type: "memory",
-                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
-                        images: ["Mem21.jpeg", "Mem22.jpeg", "Mem23.jpeg", "Mem24.jpeg"]
-                    },
-
-
-
-
-                    {
+   {
                         type: "pattern",
                         instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
                         sequence: ["boy.jpeg", "girl.jpeg"], 
                         correctAnswers: ["boy.jpeg", "girl.jpeg"], 
                         options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
                     },
+                    
+                    
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
                    
 
 
 {
     type: "spiritual_counter",
-    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة صحيحة! 📿",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "الفاتحة",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                
+                  5: {
+                title: "اليوم الخامس:  الصداقة الحقيقية(الأصحاب)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+   {
+                        type: "classification",
+                        instruction: "يتصّف جيش الإمام الحسين(ع) بصفاتٍ حسنة، بينما جيش يزيد فيتّصفون بالشرِّ و الغضب.. صنّف الصور! 🤔",
+                        items: [
+                            { image: "correct21.jpeg", isCorrect: true },
+                            { image: "wrong21.jpeg", isCorrect: false },
+                            { image: "correct22.jpeg", isCorrect: true },
+                            { image: "correct23.jpeg", isCorrect: true },
+                            { image: "correct24.jpeg", isCorrect: true },
+                            { image: "wrong22.jpeg", isCorrect: false }
+                        ]
+                    },                    
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
     surahName: "الصلاة على محمد و آل محمد(ص)",
-    targetCount: 3, // عدد المرات المطالب بها الطفل
-    giftTo: " مسلم ابن عقيل"
+    targetCount: 5, // عدد المرات المطالب بها الطفل
+    giftTo: " "
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                
+                  6: {
+                title: "اليوم السادس:  الخدمة(ابو الفضل العبّاس)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+  {
+            type: "shadow_matching",
+            instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
+            mainImage: "shadow1.jpeg",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow1.jpeg", // الظل الصحيح المطابق لها
+            wrongShadows: [
+                "wshadow1.jpeg",          // ظل خاطئ أول
+                "wshadow11.jpeg"           // ظل خاطئ ثاني
+            ]
+        },            
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "  زيارة الإمام الحسين(ع) المختصرة",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                        
+                
+                
+                  7: {
+                title: "اليوم السابع:  العز و الفخر بالايمان(القاسم)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+  
+   {
+                        type: "pattern",
+                        instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
+                        sequence: ["boy.jpeg", "girl.jpeg"], 
+                        correctAnswers: ["boy.jpeg", "girl.jpeg"], 
+                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
+                    },
+                       { type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                   
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "الصلاة على محمد و آل محمد(ص)",
+    targetCount: 7, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                  8: {
+                title: "اليوم الثامن:  الحبّ لله (علي الأكبر)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+  {
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
+                    },            
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "سورة الفاتحة",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                
+                
+           9:{
+                title: "اليوم التاسع:  الإنفاق ( عيدالله الرضيع)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+   {
+            type: "shadow_matching",
+            instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
+            mainImage: "shadow1.jpeg",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow1.jpeg", // الظل الصحيح المطابق لها
+            wrongShadows: [
+                "wshadow1.jpeg",          // ظل خاطئ أول
+                "wshadow11.jpeg"           // ظل خاطئ ثاني
+            ]
+        },               
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "الصلاة على محمد و آل محمد(ص)",
+    targetCount: 10, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
+}
+                
+                
+                
+                
+                
+                ] 
+                },
+                
+                  10: {
+                title: "اليوم العاشر:  الصداقة الحقيقية(الأصحاب)",
+                audio: "day2.m4a",
+                games: [
+                
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+{
+    type: "image_ordering",
+    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
+    correctOrder: [
+        "order1.PNG",
+        "order2.PNG",
+        "order3.PNG",
+        "order4.PNG",
+        "order5.PNG",
+        "order6.PNG"
+    ]
+},
+
+
+   {
+                        type: "classification",
+                        instruction: "يتصّف جيش الإمام الحسين(ع) بصفاتٍ حسنة، بينما جيش يزيد فيتّصفون بالشرِّ و الغضب.. صنّف الصور! 🤔",
+                        items: [
+                            { image: "correct21.jpeg", isCorrect: true },
+                            { image: "wrong21.jpeg", isCorrect: false },
+                            { image: "correct22.jpeg", isCorrect: true },
+                            { image: "correct23.jpeg", isCorrect: true },
+                            { image: "correct24.jpeg", isCorrect: true },
+                            { image: "wrong22.jpeg", isCorrect: false }
+                        ]
+                    },                    
+                    {
+    type: "soldier_quiz",
+    instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
+    items: [
+        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+        { image: "enemy11.jpeg", isCorrect: false }, 
+        { image: "Soldier11.jpeg", isCorrect: true }
+    ]
+},     
+
+
+{
+    type: "enemy_clicker",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    audioEffect: "hit.mp3",
+    enemies: [
+        { 
+            image: "enemy1.jpeg", 
+            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            requiredClicks: 5 
+        },
+        { 
+            image: "enemy11.jpeg", 
+            defeatedImage: "dead11.jpeg", 
+            requiredClicks: 8 
+        }
+    ]
+},
+                    
+                    
+                    
+                   
+
+
+{
+    type: "spiritual_counter",
+    instruction: "اضغط على السبّحة الرقمية بعد كل قراءة ! 📿",
+    surahName: "دعاء الحجة",
+    targetCount: 1, // عدد المرات المطالب بها الطفل
+    giftTo: " الإمام صاحب العصر و الزمان(عج)"
 }
                 
                 
@@ -727,9 +1343,6 @@
                 
                 ] 
                 }
-                
-                
-         
                 
            
                 
@@ -850,7 +1463,7 @@ function initGameSequence() {
             const currentDayData = gameDatabase[gameState.activeDay];
             const gameConfig = currentDayData.games[gameState.activeGameIndex];
             
-            document.getElementById("game-title").innerText = `اللعبة التفاعلية (${gameState.activeGameIndex + 1} / 4)`;
+            document.getElementById("game-title").innerText = `اللعبة التفاعلية (${gameState.activeGameIndex + 1} / 5)`;
             document.getElementById("game-instruction").innerText = gameConfig.instruction;
 
             const area = document.getElementById("main-game-area");
@@ -890,8 +1503,7 @@ else if(gameConfig.type === "spiritual_counter") {
 }
 
 
-            
-        }
+         }
 
         // 1. لعبة الذاكرة
         function buildMemoryGame(container, config) {
