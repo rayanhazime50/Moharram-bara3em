@@ -906,7 +906,7 @@
     enemies: [
         { 
             image: "enem5.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            defeatedImage: "dead5.jpeg", // صورة العدو المهزوم
             requiredClicks: 11 
         }
         
@@ -957,11 +957,11 @@
   {
             type: "shadow_matching",
             instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
-            mainImage: "shadow2.PNG",   // الصورة الأصلية الملونة
-            correctShadow: "cshadow2.PNG", // الظل الصحيح المطابق لها
+            mainImage: "shadow2.png",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow2.png", // الظل الصحيح المطابق لها
             wrongShadows: [
-                "wshadow21.PNG",          // ظل خاطئ أول
-                "wshadow22.PNG"           // ظل خاطئ ثاني
+                "wshadow21.png",          // ظل خاطئ أول
+                "wshadow22.png"           // ظل خاطئ ثاني
             ]
         },            
                     {
@@ -983,7 +983,7 @@
     enemies: [
         { 
             image: "enem6.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
+            defeatedImage: "dead6.jpeg", // صورة العدو المهزوم
             requiredClicks: 15 
         }
         
@@ -1023,12 +1023,12 @@
     type: "image_ordering",
     instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
     correctOrder: [
-        "order1.PNG",
-        "order2.PNG",
-        "order3.PNG",
-        "order4.PNG",
-        "order5.PNG",
-        "order6.PNG"
+        "Ksm1.jpeg",
+         "Ksm2.jpeg",
+         "Ksm3.jpeg",
+         "Ksm4.jpeg",
+         "Ksm5.jpeg"
+        
     ]
 },
 
@@ -1037,17 +1037,17 @@
    {
                         type: "pattern",
                         instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
-                        sequence: ["boy.jpeg", "girl.jpeg"], 
-                        correctAnswers: ["boy.jpeg", "girl.jpeg"], 
-                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
+                        sequence: ["Mem31.jpeg", "Mem33.jpeg","Mem33.jpeg"], 
+                        correctAnswers: ["Mem31.jpeg", "Mem33.jpeg","Mem33.jpeg"], 
+                        options: ["Mem33.jpeg", "Mem34.jpeg", "Mem31.jpeg", "Mem33.jpeg"] 
                     },
                        { type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
     items: [
-        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
-        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
-        { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "Soldier11.jpeg", isCorrect: true }
+        { image: "sol13.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enem7.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+         
+        { image: "sol14.jpeg", isCorrect: true }
     ]
 },     
 
@@ -1058,15 +1058,11 @@
     audioEffect: "hit.mp3",
     enemies: [
         { 
-            image: "enemy1.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
-            requiredClicks: 5 
-        },
-        { 
-            image: "enemy11.jpeg", 
-            defeatedImage: "dead11.jpeg", 
-            requiredClicks: 8 
+            image: "enem7.jpeg", 
+            defeatedImage: "dead7.jpeg", // صورة العدو المهزوم
+            requiredClicks: 20 
         }
+        
     ]
 },
                    
@@ -1096,12 +1092,12 @@
     type: "image_ordering",
     instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
     correctOrder: [
-        "order1.PNG",
-        "order2.PNG",
-        "order3.PNG",
-        "order4.PNG",
-        "order5.PNG",
-        "order6.PNG"
+        "Ak1.jpeg",
+        "Ak2.jpeg",
+         "Ak3.jpeg",
+         "Ak4.jpeg",
+        "Ak5.jpeg",
+        "ksm6.jpeg"
     ]
 },
 
@@ -1115,10 +1111,11 @@
     type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
     items: [
-        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
-        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
-        { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "Soldier11.jpeg", isCorrect: true }
+        { image: "sol15.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+          // شخص من معسكر الأعداء (لا)
+        
+        { image: "sol16.jpeg", isCorrect: true },
+         { image: "enem8.jpeg", isCorrect: false }
     ]
 },     
 
@@ -1129,15 +1126,11 @@
     audioEffect: "hit.mp3",
     enemies: [
         { 
-            image: "enemy1.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
-            requiredClicks: 5 
-        },
-        { 
-            image: "enemy11.jpeg", 
-            defeatedImage: "dead11.jpeg", 
-            requiredClicks: 8 
+            image: "enem8.jpeg", 
+            defeatedImage: "dead8.jpeg", // صورة العدو المهزوم
+            requiredClicks: 15 
         }
+       
     ]
 },
                     
@@ -1164,7 +1157,7 @@
                 
                 
            9:{
-                title: "اليوم التاسع:  الإنفاق ( عيدالله الرضيع)",
+                title: "اليوم التاسع:  الإنفاق ( عبدالله الرضيع)",
                 audio: "day9.mp3",
                 games: [
                 
@@ -1197,10 +1190,10 @@
     type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
     items: [
-        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
-        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
-        { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "Soldier11.jpeg", isCorrect: true }
+        { image: "sol17.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enem9.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+       
+        { image: "sol18.jpeg", isCorrect: true }
     ]
 },     
 
@@ -1211,15 +1204,11 @@
     audioEffect: "hit.mp3",
     enemies: [
         { 
-            image: "enemy1.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
-            requiredClicks: 5 
-        },
-        { 
-            image: "enemy11.jpeg", 
-            defeatedImage: "dead11.jpeg", 
-            requiredClicks: 8 
+            image: "enem9.jpeg", 
+            defeatedImage: "dead6.jpeg", // صورة العدو المهزوم
+            requiredClicks: 17 
         }
+   
     ]
 },
                     
@@ -1279,10 +1268,10 @@
     type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
     items: [
-        { image: "Soldier1.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
-        { image: "enemy1.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
-        { image: "enemy11.jpeg", isCorrect: false }, 
-        { image: "Soldier11.jpeg", isCorrect: true }
+        { image: "sol19.jpeg", isCorrect: true },  // جندي من أصحاب الإمام (نعم)
+        { image: "enem10.jpeg", isCorrect: false },   // شخص من معسكر الأعداء (لا)
+         
+        { image: "sol20.jpeg", isCorrect: true }
     ]
 },     
 
@@ -1293,15 +1282,11 @@
     audioEffect: "hit.mp3",
     enemies: [
         { 
-            image: "enemy1.jpeg", 
-            defeatedImage: "dead1.jpeg", // صورة العدو المهزوم
-            requiredClicks: 5 
-        },
-        { 
-            image: "enemy11.jpeg", 
-            defeatedImage: "dead11.jpeg", 
-            requiredClicks: 8 
+            image: "enem10.jpeg", 
+            defeatedImage: "dead10.jpeg", // صورة العدو المهزوم
+            requiredClicks: 25 
         }
+        
     ]
 },
                     
@@ -1430,12 +1415,24 @@
 
 
 function initGameSequence() {
-            // تم حذف كود تشغيل الـ bgMusic بالكامل لضمان سرعة الدخول للألعاب
-            gameState.activeGameIndex = 0;
-            loadGameEngine();
-            showScreen("scr-game");
+    gameState.activeGameIndex = 0;
+    
+    // 🎵 تشغيل الموسيقى الموحدة الذكية لجميع الأيام
+    const bgAudio = document.getElementById("game-bg-music");
+    
+    if (bgAudio) {
+        // إذا كانت الموسيقى تعمل بالفعل من اليوم السابق، لا تقم بإعادة تشغيلها من الأول (لتبقى سلسة)
+        if (bgAudio.paused || !bgAudio.src) {
+            bgAudio.src = "bgday1.mp3"; // 👈 ضعي اسم ملفكِ الموحد هنا
+            bgAudio.volume = 0.3; // ضبط الصوت ليكون خفيفاً ومناسباً للأطفال (25%)
+            
+            bgAudio.play().catch(e => console.log("المتصفح يطلب تفاعلاً أولاً:", e));
         }
+    }
 
+    loadGameEngine();
+    showScreen("scr-game");
+}
 
 
         
@@ -1924,31 +1921,21 @@ function buildCampSortingGame(container, config) {
         } 
         
         
-        function cleanupGame() {
-    // 1. تنظيف وتفريغ ساحة اللعبة بصرياً في الـ HTML
+       function cleanupGame() {
     const area = document.getElementById("game-area");
-    if (area) {
-        area.innerHTML = "";
-    }
+    if(area) area.innerHTML = "";
     
-    // 2. إخفاء زر الانتقال للعبة التالية حتى يربح الطفل اللعبة الحالية
     const nextBtn = document.getElementById("btn-next-game");
-    if (nextBtn) {
-        nextBtn.style.display = "none";
-    }
+    if(nextBtn) nextBtn.style.display = "none";
     
-    // 3. 🧹 تصفير متغيرات لعبة ترتيب الصور بالضغط (Click to Order)
+    // 💡 تركنا موسيقى الخلفية تعمل هنا لكي لا تنقطع بين الشاشات وتظل اللعبة حيوية وسريعة
+    
     window.currentCorrectOrder = null;
     window.userSelectedOrder = [];
-    
-    // 4. 📿 تصفير متغيرات لعبة العداد العبادي النوراني (Spiritual Counter)
     window.spiritualTarget = null;
     window.spiritualCurrent = null;
     window.spiritualGiftTo = null;
-    
-    console.log("تم تنظيف ذاكرة الألعاب بنجاح والاستعداد للمرحلة القادمة! 🧼✨");
-}
-       
+}    
         
         
       function buildShadowMatchingGame(container, config) {
