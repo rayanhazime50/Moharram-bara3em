@@ -786,19 +786,7 @@
                 audio: "day4.mp3",
                 games: [
                 
-                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
-{
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "mos1.jpeg",
-        "mos2.jpeg",
-        "mos3.jpeg",
-        "mos4.jpeg",
-        "mos5.jpeg",
-        "mos6.jpeg"
-    ]
-},
+                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص 
 
 
    {
@@ -865,19 +853,13 @@
                 games: [
                 
                 // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
-{
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "As1.jpeg",
-        "As2.jpeg",
-        "As3.jpeg",
-        "As4.jpeg",
-        "As5.jpeg"
-        
-    ]
-},
-
+ {
+                        type: "pattern",
+                        instruction: "اكتشف النمط الذكي وكرره نفسه في الفراغات التالية! 🧩✨",
+                        sequence: ["boy.jpeg", "girl.jpeg", "girl.jpeg","boy.jpeg"], 
+                        correctAnswers: ["boy.jpeg", "girl.jpeg","girl.jpeg","boy.jpeg"], 
+                        options: ["boy.jpeg", "girl.jpeg", "boy.jpeg", "girl.jpeg"] 
+                    },
 
    {
                         type: "classification",
@@ -1100,23 +1082,20 @@
                 title: "اليوم الثامن:  الحبّ لله (علي الأكبر)",
                 audio: "day8.mp3",
                 games: [
-                
-                // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
+
 {
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "Ak1.jpeg",
-        "Ak2.jpeg",
-         "Ak3.jpeg",
-         "Ak4.jpeg",
-        "Ak5.jpeg",
-        "ksm6.jpeg"
-    ]
-},
+            type: "shadow_matching",
+            instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
+            mainImage: "shadow81.jpeg",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow81.jpeg", // الظل الصحيح المطابق لها
+            wrongShadows: [
+                "wshadow81.jpeg",          // ظل خاطئ أول
+                "wshadow82.jpeg"           // ظل خاطئ ثاني
+            ]
+        },       
 
 
-  {
+ {
                         type: "memory",
                         instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
                         images: ["Mem1.jpeg", "Mem2.jpeg", "Mem3.jpeg", "Mem4.jpeg"]
@@ -1176,28 +1155,24 @@
                 games: [
                 
                 // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
-{
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "order1.PNG",
-        "order2.PNG",
-        "order3.PNG",
-        "order4.PNG",
-        "order5.PNG",
-        "order6.PNG"
-    ]
-},
+
+ {
+                        type: "memory",
+                        instruction: "اطووا البطاقات الممتعة وجدوا الصور المتطابقة!",
+                        images: ["Mem91.jpeg", "Mem92.jpeg", "Mem93.jpeg", "Mem94.jpeg"]
+                    },    
+
+
 
 
    {
             type: "shadow_matching",
             instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
-            mainImage: "shadow1.jpeg",   // الصورة الأصلية الملونة
-            correctShadow: "cshadow1.jpeg", // الظل الصحيح المطابق لها
+            mainImage: "shadow91.jpeg",   // الصورة الأصلية الملونة
+            correctShadow: "cshadow91.jpeg", // الظل الصحيح المطابق لها
             wrongShadows: [
-                "wshadow1.jpeg",          // ظل خاطئ أول
-                "wshadow11.jpeg"           // ظل خاطئ ثاني
+                "wshadow91.jpeg",          // ظل خاطئ أول
+                "wshadow92.jpeg"           // ظل خاطئ ثاني
             ]
         },               
                     {
@@ -1253,31 +1228,19 @@
                 
                 // مثال جاهز للنسخ والتجربة داخل الأيام في السكريبت الخاص بكِ:
 {
-    type: "image_ordering",
-    instruction: "ساعد العصفورة في ترتيب الصور من البداية للنهاية! 🪶",
-    correctOrder: [
-        "order1.PNG",
-        "order2.PNG",
-        "order3.PNG",
-        "order4.PNG",
-        "order5.PNG",
-        "order6.PNG"
+    type: "tent_lighting",
+    instruction: " اضغط على الصور لتضيء بعض المشاهد من يوم العاشر",
+    tents: [
+        { title: "", image: "ten1.jpeg" },
+        { title: "", image: "ten2.jpeg" },
+        { title: "", image: "ten3.jpeg" },
+        { title: "", image: "ten4.jpeg" },
+        { title: "", image: "ten5.jpeg" }
     ]
 },
 
 
-   {
-                        type: "classification",
-                        instruction: "يتصّف جيش الإمام الحسين(ع) بصفاتٍ حسنة، بينما جيش يزيد فيتّصفون بالشرِّ و الغضب.. صنّف الصور! 🤔",
-                        items: [
-                            { image: "correct21.jpeg", isCorrect: true },
-                            { image: "wrong21.jpeg", isCorrect: false },
-                            { image: "correct22.jpeg", isCorrect: true },
-                            { image: "correct23.jpeg", isCorrect: true },
-                            { image: "correct24.jpeg", isCorrect: true },
-                            { image: "wrong22.jpeg", isCorrect: false }
-                        ]
-                    },                    
+                  
                     {
     type: "soldier_quiz",
     instruction: "هل يعد هذا الشخص جندي من جنود الإمام الحسين(ع)؟ 🤔",
