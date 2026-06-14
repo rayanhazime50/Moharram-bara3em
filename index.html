@@ -505,6 +505,7 @@
     </div>
 
     <div id="scr-game" class="screen">
+    <audio id="game-bg-music" loop></audio>
         <h2 id="game-title">اسم اللعبة التفاعلية</h2>
         <p id="game-instruction">ماذا يفعل الطفل هنا؟</p>
         
@@ -1086,7 +1087,7 @@
 {
             type: "shadow_matching",
             instruction: "ابحث عن الظل الصحيح المطابق للصورة ! 🔍🕊️",
-            mainImage: "shadow81.jpeg",   // الصورة الأصلية الملونة
+            mainImage: "shadow81.PNG",   // الصورة الأصلية الملونة
             correctShadow: "cshadow81.jpeg", // الظل الصحيح المطابق لها
             wrongShadows: [
                 "wshadow81.jpeg",          // ظل خاطئ أول
@@ -1861,6 +1862,8 @@ function buildCampSortingGame(container, config) {
         
         function progressGameSequence() {
             cleanupGame();
+            gameState.collectedFeathers++;
+            
         
             gameState.activeGameIndex++;
             if(gameState.activeGameIndex < gameDatabase[gameState.activeDay].games.length) {
@@ -1869,7 +1872,7 @@ function buildCampSortingGame(container, config) {
                 alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على 5 ريشات 🪶");
                 if(!gameState.completedDays.includes(gameState.activeDay)) {
                     gameState.completedDays.push(gameState.activeDay);
-                    gameState.collectedFeathers++;
+                    
                 }
                 saveProgress();
                 buildDaysMap();
