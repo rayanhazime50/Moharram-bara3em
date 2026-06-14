@@ -962,8 +962,9 @@
     instruction: "كن كالسقاء أبو الفضل واروِ عطش هذه العائلة ! 💧",
     kidsImage: "fam.jpeg", // صورة الأطفال الكرتونية
     waterBagImage: "wat.jpeg", // صورة القربة للضغط عليها
-    targetCups: 3,  // عدد الأكواب المطلوب ملؤها بالفوز (مثلاً 5)
-    timeLimit: 20   // الوقت المتاح للطفل بالثواني (15 ثانية)
+    targetCups: 5,  // عدد الأكواب المطلوب ملؤها بالفوز (مثلاً 5)
+    timeLimit: 30,   // الوقت المتاح للطفل بالثواني (15 ثانية)
+    
 },
 
 
@@ -2403,7 +2404,7 @@ function buildTentLightingGame(container, config) {
     // نص وصفي مشجع للطفل
     const instructionText = document.createElement("p");
     instructionText.style.cssText = "font-size: 16px; color: var(--gold); margin-bottom: 25px; text-align: center; font-weight: bold; line-height: 1.6;";
-    instructionText.innerHTML = "المخيم هادئ ومليء بالعبادة والنور.. ✨<br><span style='font-size:14px; color:#fff; font-weight:normal;'>اضغط على الخيم الكرتونية لتوقد القناديل وتضيء المخيم بجمال!</span>";
+    instructionText.innerHTML = "عرس القاسم ابن الحسن(ع) ✨<br><span style='font-size:14px; color:#fff; font-weight:normal;'>اضغط على الشموع  لتضيئها🕯️!</span>";
     container.appendChild(instructionText);
 
     // حاوية الخيم المرنة
@@ -2456,7 +2457,7 @@ function buildTentLightingGame(container, config) {
 
             // إضافة تأثير جزيئات صغيرة (نجوم) فوق الخيمة عند إضاءتها لمزيد من الحماس
             const spark = document.createElement("div");
-            spark.innerText = "✨";
+            spark.innerText = "";
             spark.style.cssText = "position: absolute; top: 10px; font-size: 20px; animation: pulse 0.5s infinite; filter: drop-shadow(0 0 5px gold);";
             tentCard.appendChild(spark);
 
@@ -2466,7 +2467,7 @@ function buildTentLightingGame(container, config) {
                 tentsWrapper.querySelectorAll(".tent-card-item").forEach(c => c.style.pointerEvents = "none");
                 
                 setTimeout(function() {
-                    alert("تقبل الله منكم! ✨ لقد أضأت المخيم النوراني بالكامل بأفعالك الطاهرة ودعائك الجميل يا بطل! 👏🌟");
+                    alert("تقبل الله منك! ✨ لقد أضأت جميع الشمعات يا بطل! 👏🌟");
                     endActiveMiniGame(); // فتح زر اللعبة التالية
                 }, 600);
             }
@@ -2482,51 +2483,69 @@ function buildTentLightingGame(container, config) {
        // ==========================================================================
 // 🎮 محرك لعبة: سقاية عطاشى كربلاء (Water Bearer Game)
 // ==========================================================================
+
+       // ==========================================================================
+// 🎮 محرك لعبة: سقاية عطاشى كربلاء المطور (5 ضغطات لكل كوب)
+// ==========================================================================
 function buildWaterBearerGame(container, config) {
     if (!config) return;
     container.innerHTML = "";
 
-    // تهيئة حالة اللعبة الداخلية
-    let currentTargetCups = config.targetCups || 5; // عدد الأكواب المطلوب ملؤها
-    let filledCups = 0;
-    let timeLeft = config.timeLimit || 15; // الوقت المتاح بالثواني
+    let totalRequiredCups = config.targetCups || 3; // عدد الأطفال/الأكواب المطلوب سقايتها (مثلاً 3 أطفال)
+    let completedCups = 0;                          // عدد الأكواب التي امتلأت بالكامل (وصلت 5 ضغطات)
+    let currentCupClicks = 0;                       // عداد الضغطات الحالية للكوب النشط (من 0 إلى 5)
+    let timeLeft = config.timeLimit || 20;          // الوقت المتاح بالثواني (زدناه لـ 20 ليناسب عدد الضغطات)
     let gameTimer = null;
 
-    // 1. واجهة العدادات (الأكواب المتبقية والوقت)
+    // 1. واجهة العدادات (الأكواب المكتملة والوقت المتبقي)
     const statusBar = document.createElement("div");
     statusBar.style.cssText = "display: flex; justify-content: space-around; width: 100%; max-width: 400px; margin: 0 auto 20px auto; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid rgba(223,183,67,0.2);";
     
     statusBar.innerHTML = `
-        <div style="font-size: 15px; color: #fff;">🎯 الأكواب الممتلئة: <span id="water-cups-count" style="color:var(--gold); font-weight:bold;">0 / ${currentTargetCups}</span></div>
+        <div style="font-size: 15px; color: #fff;">🥤 أطفال تم سقايتهم: <span id="water-cups-count" style="color:var(--gold); font-weight:bold;">0 / ${totalRequiredCups}</span></div>
         <div style="font-size: 15px; color: #fff;">⏳ الوقت المتبقي: <span id="water-timer" style="color:var(--accent-red); font-weight:bold;">${timeLeft}ث</span></div>
     `;
     container.appendChild(statusBar);
 
-    // 2. مشهد الأطفال والقربة
+    // 2. مشهد اللعبة (الأطفال وحاوية الأكواب)
     const gameScene = document.createElement("div");
     gameScene.style.cssText = "text-align: center; position: relative; margin-bottom: 20px;";
 
-    // عرض صورة أطفال القافلة بانتظار الماء
     const kidsImg = document.createElement("img");
     kidsImg.src = config.kidsImage || "assets/images/thirsty_kids.png";
-    kidsImg.style.cssText = "width: 100%; max-width: 260px; height: auto; object-fit: contain; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;";
+    kidsImg.style.cssText = "width: 100%; max-width: 240px; height: auto; object-fit: contain; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;";
     gameScene.appendChild(kidsImg);
 
-    // حاوية الأكواب النورانية التي تمتلئ تدريجياً
+    // حاوية عرض الأكواب الكرتونية
     const cupsContainer = document.createElement("div");
-    cupsContainer.style.cssText = "display: flex; gap: 8px; justify-content: center; margin-bottom: 25px; font-size: 24px; min-height: 35px;";
-    for (let i = 0; i < currentTargetCups; i++) {
-        const cupSpan = document.createElement("span");
-        cupSpan.id = `water-cup-${i}`;
-        cupSpan.innerText = "🥛"; // كوب فارغ بالبداية
-        cupSpan.style.cssText = "opacity: 0.3; transition: all 0.3s ease;";
-        cupsContainer.appendChild(cupSpan);
+    cupsContainer.style.cssText = "display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;";
+    
+    for (let i = 0; i < totalRequiredCups; i++) {
+        const cupBox = document.createElement("div");
+        cupBox.id = `cup-box-${i}`;
+        // تصميم صندوق الكوب (يحتوي على شكل الكوب ونسبة الامتلاء خلفه)
+        cupBox.style.cssText = "width: 60px; height: 75px; border: 2px dashed #444; border-radius: 10px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; background: rgba(0,0,0,0.3); overflow: hidden; transition: all 0.3s;";
+        
+        // طبقة الماء الداخلية الملونة (تبدأ بارتفاع 0% وتصعد مع كل ضغطة)
+        const waterLayer = document.createElement("div");
+        waterLayer.id = `cup-water-${i}`;
+        waterLayer.style.cssText = "width: 100%; height: 0%; background: linear-gradient(to top, #2a6f97, #014f86); transition: height 0.2s ease; position: absolute; bottom: 0; left: 0; z-index: 1;";
+        
+        // إيموجي الكوب الثابت في الواجهة
+        const cupEmoji = document.createElement("div");
+        cupEmoji.innerText = "🥛";
+        cupEmoji.style.cssText = "font-size: 28px; z-index: 2; margin-bottom: 10px; transition: transform 0.2s;";
+        cupEmoji.id = `cup-emoji-${i}`;
+
+        cupBox.appendChild(waterLayer);
+        cupBox.appendChild(cupEmoji);
+        cupsContainer.appendChild(cupBox);
     }
     gameScene.appendChild(cupsContainer);
 
     // 3. زر القربة التفاعلي الكبير للضغط
     const waterBagBtn = document.createElement("button");
-    waterBagBtn.style.cssText = "display: block; width: 140px; height: 140px; margin: 0 auto; background: none; border: none; cursor: pointer; position: relative; transition: transform 0.1s ease; outline: none; -webkit-tap-highlight-color: transparent;";
+    waterBagBtn.style.cssText = "display: block; width: 130px; height: 130px; margin: 0 auto; background: none; border: none; cursor: pointer; position: relative; transition: transform 0.1s ease; outline: none; -webkit-tap-highlight-color: transparent;";
     
     const waterBagImg = document.createElement("img");
     waterBagImg.src = config.waterBagImage || "assets/images/water_bag.png";
@@ -2534,14 +2553,19 @@ function buildWaterBearerGame(container, config) {
     waterBagBtn.appendChild(waterBagImg);
 
     const tapLabel = document.createElement("div");
-    tapLabel.style.cssText = "font-size: 13px; color: var(--gold); font-weight: bold; margin-top: 8px; text-align: center;";
-    tapLabel.innerText = "اضغط على القربة بسرعة لسقاية الأطفال! 💧";
+    tapLabel.style.cssText = "font-size: 14px; color: var(--gold); font-weight: bold; margin-top: 10px; text-align: center; line-height: 1.4;";
+    tapLabel.id = "water-instructions";
+    tapLabel.innerHTML = `اضغط على القربة لملء الكوب الأول! 💧<br><span style="font-size:12px; color:#aaa;">(يحتاج الكوب إلى 5 ضغطات ليمتلئ)</span>`;
 
     gameScene.appendChild(waterBagBtn);
     gameScene.appendChild(tapLabel);
     container.appendChild(gameScene);
 
-    // 4. تشغيل عداد الوقت التنازلي الحماسي
+    // تظليل الكوب الأول ليعرف الطفل أنه الكوب النشط حالياً
+    const firstCup = document.getElementById(`cup-box-0`);
+    if(firstCup) firstCup.style.borderColor = "var(--gold)";
+
+    // 4. تشغيل العداد التنازلي للحماس
     gameTimer = setInterval(function() {
         timeLeft--;
         const timerLabel = document.getElementById("water-timer");
@@ -2551,47 +2575,81 @@ function buildWaterBearerGame(container, config) {
             clearInterval(gameTimer);
             waterBagBtn.disabled = true;
             waterBagBtn.style.opacity = "0.5";
-            alert("لقد انتهى الوقت! ⏳ حاول مجدداً بنشاط أسرع لسقاية كافة الأطفال الصغار! 🔄");
-            loadGameEngine(); // إعادة تحميل اللعبة ليعيد المحاولة
+            alert("انتهى الوقت! ⏳ حاول أن تكون أسرع في المرة القادمة لسقاية  الجميع! 🔄");
+            loadGameEngine(); // إعادة تشغيل اللعبة للمحاولة مجدداً
         }
     }, 1000);
 
-    // 5. لوجيك الضغط لملء الأكواب
+    // 5. لوجيك معالجة الضغطات الـ 5 لكل كوب
     waterBagBtn.onclick = function() {
-        if (filledCups < currentTargetCups && timeLeft > 0) {
-            // تأثير حركة اهتزاز القربة عند الضغط (Feedback حركي ممتع)
-            waterBagBtn.style.transform = "scale(0.9) rotate(-5deg)";
-            setTimeout(() => { waterBagBtn.style.transform = "scale(1) rotate(0deg)"; }, 80);
+        if (completedCups >= totalRequiredCups || timeLeft <= 0) return;
 
-            // ملء الكوب الحالي وتغيير مظهر النور الذهبي له
-            const currentCup = document.getElementById(`water-cup-${filledCups}`);
-            if (currentCup) {
-                currentCup.innerText = "🥤✨"; // كوب ممتلئ بنور
-                currentCup.style.opacity = "1";
-                currentCup.style.transform = "scale(1.2)";
-                setTimeout(() => { currentCup.style.transform = "scale(1)"; }, 200);
+        // حركة اهتزاز القربة الخفيفة عند كل ضغطة
+        waterBagBtn.style.transform = "scale(0.92) rotate(-4deg)";
+        setTimeout(() => { waterBagBtn.style.transform = "scale(1) rotate(0deg)"; }, 70);
+
+        currentCupClicks++; // زيادة عدد ضغطات الكوب الحالي
+        
+        // حساب نسبة الارتفاع (كل ضغطة تعطي 20%، والضغطات الـ 5 تعطي 100%)
+        let fillPercentage = currentCupClicks * 20;
+
+        // تحديث شكل الماء داخل الصندوق النشط
+        const currentWaterLayer = document.getElementById(`cup-water-${completedCups}`);
+        if (currentWaterLayer) {
+            currentWaterLayer.style.height = `${fillPercentage}%`;
+        }
+
+        // تأثير اهتزاز للإيموجي لتوضيح تدفق الماء
+        const currentCupEmoji = document.getElementById(`cup-emoji-${completedCups}`);
+        if (currentCupEmoji) {
+            currentCupEmoji.style.transform = "scale(1.2) translateY(-3px)";
+            setTimeout(() => { currentCupEmoji.style.transform = "scale(1)"; }, 150);
+        }
+
+        // 🌟 عندما يكتمل الكوب الحالي بـ 5 ضغطات تماماً:
+        if (currentCupClicks === 5) {
+            // تحويل شكل الكوب الحالي إلى ممتلئ ومشع بنور ذهبي
+            const currentCupBox = document.getElementById(`cup-box-${completedCups}`);
+            if (currentCupBox) {
+                currentCupBox.style.borderColor = "var(--ashura-green)";
+                currentCupBox.style.background = "rgba(21, 66, 51, 0.2)";
+            }
+            if (currentCupEmoji) {
+                currentCupEmoji.innerText = "🥤"; // تحول لكوب ممتلئ بنور
             }
 
-            filledCups++;
-            const countLabel = document.getElementById("water-cups-count");
-            if (countLabel) countLabel.innerText = `${filledCups} / ${currentTargetCups}`;
+            completedCups++; // الانتقال للطفل/الكوب التالي
+            currentCupClicks = 0; // تصفير عداد الضغطات للكوب الجديد
 
-            // عند سقاية جميع الأطفال وامتلاء كافة الأكواب بنجاح!
-            if (filledCups === currentTargetCups) {
-                clearInterval(gameTimer); // إيقاف العداد فوراً
+            // تحديث واجهة العداد العلوي
+            const countLabel = document.getElementById("water-cups-count");
+            if (countLabel) countLabel.innerText = `${completedCups} / ${totalRequiredCups}`;
+
+            // التحقق هل انتهينا من سقاية جميع الأطفال؟
+            if (completedCups === totalRequiredCups) {
+                clearInterval(gameTimer); // إيقاف الوقت فوراً
                 waterBagBtn.disabled = true;
                 waterBagBtn.style.pointerEvents = "none";
                 
+                if(tapLabel) tapLabel.innerText = "هنيئاً لك! تم سقاية الجميع بنجاح! ✨💧";
+
                 setTimeout(function() {
-                    alert("أحسنت يا بطل القافلة السقاء! 🌟 لقد رويت عطش الأطفال الصغار ونلت ثواب العطاء والإيثار العظيم! 💧👏");
-                    endActiveMiniGame(); // فتح زر اللعبة التالية للمتابعة
-                }, 400);
+                    alert("يا لك من بطل سقاء كريم! 🌟 رويت عطش العائلة الزائرة بجهدك ونلت ريشة العطاء! 💧👏");
+                    endActiveMiniGame(); // فتح زر المتابعة
+                }, 500);
+            } else {
+                // تفعيل وتمييز الكوب التالي بصرياً
+                const nextCupBox = document.getElementById(`cup-box-${completedCups}`);
+                if (nextCupBox) {
+                    nextCupBox.style.borderColor = "var(--gold)";
+                }
+                if(tapLabel) {
+                    tapLabel.innerHTML = `أحسنت! امتلأ الكوب الأول، الآن املأ الكوب التالي! 💧<br><span style="font-size:12px; color:#aaa;">(اضغط 5 مرات متتالية)</span>`;
+                }
             }
         }
     };
 }
-       
-       
        
         
             
