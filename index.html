@@ -560,7 +560,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -665,7 +665,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -747,7 +747,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -815,7 +815,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -888,7 +888,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -977,7 +977,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -1051,7 +1051,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة  ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -1116,7 +1116,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -1190,7 +1190,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -1256,7 +1256,7 @@
 
 {
     type: "enemy_clicker",
-    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ليتم القضاء عليه! ⚔️💥",
+    instruction: "اضرب هذا العدو من خلال الضغط عليه أكثر من مرة ⚔️💥",
     audioEffect: "hit.mp3",
     enemies: [
         { 
@@ -2075,13 +2075,12 @@ function buildSoldierQuizGame(container, config) {
             enemyImg.style.borderColor = "var(--accent-red)";
             enemyImg.src = config.enemies[currentEnemyIndex].image;
             clicksLeft = config.enemies[currentEnemyIndex].requiredClicks;
-            counterText.innerText = `الضربات المتبقية للقضاءعلى العدو: ${clicksLeft} 💥`;
-        } else {
+            counterText.innerText = `الضربات المتبقية : ${clicksLeft} 👊🏻`  } else {
             // عند القضاء على جميع الأعداء
-            counterText.innerText = "تم القضاءعلى الأعداء بنجاح! 🎉";
+            counterText.innerText = "لقد لقنت الأعداء درسًا لن ينسوه ابدا";
             enemyImg.style.display = "none";
             setTimeout(() => {
-                alert("أحسنت يا بطل الأبطال! لقد دافعت عن الحق وقضيت على الأعداء بشجاعتك! 🏴⚔️");
+                alert("أحسنت يا بطل الأبطال! لقد دافعت عن الحق بشجاعتك! 🏴⚔️");
                 endActiveMiniGame();
             }, 400);
         }
@@ -2099,12 +2098,12 @@ function buildSoldierQuizGame(container, config) {
         setTimeout(() => { enemyImg.style.transform = "scale(1) rotate(0deg)"; }, 50);
 
         clicksLeft--;
-        counterText.innerText = `الضربات المتبقية لهزيمة العدو: ${clicksLeft} 💥`;
+        counterText.innerText = `الضربات المتبقية : ${clicksLeft} 👊🏻`;
 
         // 💥 اللوجيك السحري هنا عند انتهاء الكبسات:
         if (clicksLeft <= 0) {
             isTransitioning = true; // قفل الكبس مؤقتاً
-            counterText.innerText = "تم القضاء عليه! ⚔️🔥";
+            counterText.innerText = "! ⚔️🔥";
             
             // 1. تبديل الصورة فوراً لتظهر صورة العدو المهزوم
             enemyImg.src = config.enemies[currentEnemyIndex].defeatedImage;
@@ -2433,7 +2432,7 @@ function buildTentLightingGame(container, config) {
                 tentsWrapper.querySelectorAll(".tent-card-item").forEach(c => c.style.pointerEvents = "none");
                 
                 setTimeout(function() {
-                    alert("تقبل الله منك! ✨ لقد أضأت جميع الشمعات يا بطل! 👏🌟");
+                    alert("تقبل الله منك! ✨ لقد أضأت جميع الصور يا بطل! 👏🌟");
                     endActiveMiniGame(); // فتح زر اللعبة التالية
                 }, 600);
             }
