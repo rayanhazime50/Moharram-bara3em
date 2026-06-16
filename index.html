@@ -1897,7 +1897,7 @@ function buildCampSortingGame(container, config) {
             const canvas = document.getElementById("canvas-box");
             const status = document.getElementById("prize-status");
 
-            if(gameState.collectedFeathers >= 1) {
+            if(gameState.collectedFeathers >= 50) {
                 canvas.classList.add("completed");
                 status.innerText = "رائع! اكتملت لوحة لبيك يا حسين بريش المحبة والمواظبة!";
             } else {
