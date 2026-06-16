@@ -518,7 +518,7 @@
 
     <div id="scr-prize" class="screen">
         <h2>أحسنت المواظبة يا بطل الحسين! 🎉</h2>
-        <p>لقد جمعت ريشات الأيام العشرة بالكامل، وها هي لوحتك النورانية مرسومة بريش الوفاء !</p>
+        <p>لقد جمعت ريشات الأيام العشرة بالكامل، وها هي لوحتك  مرسومة بريش الذي جمعته !</p>
         
         <div class="feather-canvas" id="canvas-box">
             <img id="prize-img" src="labaik-ya-hussein-feathers.jpg" alt="لبيك يا حسين">
@@ -1896,14 +1896,19 @@ function buildCampSortingGame(container, config) {
             showScreen("scr-prize");
             const canvas = document.getElementById("canvas-box");
             const status = document.getElementById("prize-status");
-
-            if(gameState.collectedFeathers >= 50) {
+if (gameState.completedDays && gameState.completedDays.length >= 10) {
+            showScreen("scr-prize"); // يفتح شاشة الهدية إذا أتم 10 أيام
+        } else {
+            // رسالة تنبيهية مشجعة إذا حاول الدخول مبكراً
+            alert("🔒 لم تكتمل الرحلة بعد يا بطل! واصل التزامك اليومي وأكمل الأيام العشرة  لتفتح الهدية  ! 🎁✨");
+        }
+            /*if(gameState.collectedFeathers >= 50) {
                 canvas.classList.add("completed");
                 status.innerText = "رائع! اكتملت لوحة لبيك يا حسين بريش المحبة والمواظبة!";
             } else {
                 canvas.classList.remove("completed");
                 status.innerText = `تابع اللعب يومياً! رصيدك الآن ${gameState.collectedFeathers} ريشات والمطلوب 10 لتظهر اللوحة النورانية بالكامل.`;
-            }
+            }*/
         }
 
         
