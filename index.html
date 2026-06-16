@@ -480,9 +480,11 @@
     <div id="scr-map" class="screen">
         <div style="display:flex; justify-content:space-between; width:100%; border-bottom:1px solid var(--gold); padding-bottom:5px;">
             <span>البطل/ة: <b id="lbl-name" style="color:var(--gold)">-</b></span>
-            <span>رصيدي: <b id="lbl-feathers" style="color:var(--gold)">0</b> 🪶</span>
-        </div>
-        <h3>خريطة الأيام العشرة</h3>
+           <div class="stat-item">
+    🪶 رصيدي: <span id="lbl-feathers">0</span>
+</div></div>
+        
+            <h3>خريطة الأيام العشرة</h3>
         <p>تفتح قصة وألعاب كل يوم تلقائياً عند الساعة 8:30 صباحًا</p>
         <div class="days-grid" id="map-grid"></div>
         <button id="btn-prize-screen" style="display:none; width:100%; margin-top:20px; background-color:var(--accent-red);" onclick="viewFinalPrize()">🎁 هدية التزامك باللّعب طيلة العشرة الأيام</button>
@@ -1854,28 +1856,41 @@ function buildCampSortingGame(container, config) {
             document.getElementById("btn-next-game").style.display = "block";
         }
 
-        
         function progressGameSequence() {
-            cleanupGame();
-            gameState.collectedFeathers++;
-            
+    cleanupGame();
+
+    // 🪶 زيادة ريشة اللعبة الفرعية المكتملة
+    gameState.collectedFeathers++;
+    
+    // 🌟 تحديث العداد العلوي فوراً على الخريطة ليرى الطفل رصيده الجديد
+    const mapFeathersLabel = document.getElementById("lbl-feathers");
+    if (mapFeathersLabel) {
+        mapFeathersLabel.innerText = gameState.collectedFeathers;
+    }
+
+    gameState.activeGameIndex++;
+    
+    // فحص هل بقي ألعاب في هذا اليوم؟
+    if(gameState.activeGameIndex < gameDatabase[gameState.activeDay].games.length) {
+        loadGameEngine();
+    } else {
+        // 🎉 الطفل أنهى اليوم بالكامل بنجاح!
+        alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وجمعت ريشاتك بنجاح! 🪶");
         
-            gameState.activeGameIndex++;
-            if(gameState.activeGameIndex < gameDatabase[gameState.activeDay].games.length) {
-                loadGameEngine();
-            } else {
-                alert("هنيئاً! أكملت كافة ألعاب هذا اليوم الممتعة وحصلت على 5 ريشات 🪶");
-                if(!gameState.completedDays.includes(gameState.activeDay)) {
-                    gameState.completedDays.push(gameState.activeDay);
-                    
-                }
-                saveProgress();
-                buildDaysMap();
-                showScreen("scr-map");
-            }
+        if(!gameState.completedDays.includes(gameState.activeDay)) {
+            gameState.completedDays.push(gameState.activeDay);
         }
         
-        
+        // 🌟 فحص أخير للتأكد من حفظ وتحديث العداد قبل العودة للخريطة
+        if (mapFeathersLabel) {
+            mapFeathersLabel.innerText = gameState.collectedFeathers;
+        }
+
+        saveProgress(); // حفظ التقدّم في الذاكرة
+        buildDaysMap();  // إعادة بناء الخريطة لتحديث الأقفال والأيام المفتوحة
+        showScreen("scr-map"); // العودة لشاشة الخريطة
+    }
+}       
 
         function viewFinalPrize() {
             showScreen("scr-prize");
