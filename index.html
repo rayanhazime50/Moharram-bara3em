@@ -1389,9 +1389,20 @@ function initGameSequence() {
                 else {
             // 🌟 الأيام التالية تفتح إذا اكتمل اليوم السابق وتجاوزنا الساعة 8:30 صباحاً
             const isPreviousDayCompleted = gameState.completedDays.includes(d - 1);
-            const isTimePassed = currentTimeInMinutes >= timeLimitInMinutes;}
+            const isTimePassed = currentTimeInMinutes >= timeLimitInMinutes;
+            
+                          if (isPreviousDayCompleted && isTimePassed) {
+                isUnlocked = true;
+            }
+            
+if (gameState.completedDays.includes(d) || gameState.activeDay === d ) {
+            isUnlocked = true;
+        } 
+            
+            
+            }
                 let isDone = gameState.completedDays.includes(d);
-
+ 
                 if(isUnlocked) {
                     node.classList.add("unlocked");
                     node.innerHTML = `<h3>المرحلة ${d}</h3><p style="font-size:12px; color:var(--gold);">${gameDatabase[d] ? gameDatabase[d].title : 'مجلس كربلائي وعبرة'}</p>`;
